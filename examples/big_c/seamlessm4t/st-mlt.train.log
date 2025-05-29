@@ -1,0 +1,719 @@
++ python -m seamlessm4t.finetune --src_lang bem --tgt_lang eng --train_dataset /scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mlt.tc.punc.train.tsv --eval_dataset /scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mlt.tc.punc.valid.tsv --model_name facebook/seamless-m4t-v2-large --load_from_mt_pretrained /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_MT_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250 --processor_path /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_MT_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250_proc --load_from_asr_pretrained /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ASR_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250 --save_model_to /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST-MLT_tc-punc_lr6e-5_warmup2000_epoch10_bsz120_freq60_max30s_p10x250 --save_processor_path /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST-MLT_tc-punc_lr6e-5_warmup2000_epoch10_bsz120_freq60_max30s_p10x250_proc --mode MULTI_TASKING --eval_mode SPEECH_TO_TEXT --learning_rate 6e-5 --warmup_steps 2000 --max_epochs 10 --kd_loss_type KLD --detach_teacher --alpha 1 --beta 1 --gamma 2 --batch_size 120 --update_freq 60 --max_text_tokens 128 --max_speech_dur 30.0 --eval_steps 250 --patience 10 --log_steps 50 --untie_lm_head --prefix_skip_len 1 --dropout_fix
+2025-05-23 14:05:48 | INFO | __main__ | input args: Namespace(src_lang='bem', tgt_lang='eng', train_dataset=PosixPath('/scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mlt.tc.punc.train.tsv'), eval_dataset=PosixPath('/scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mlt.tc.punc.valid.tsv'), model_name='facebook/seamless-m4t-v2-large', load_from_mt_pretrained='/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_MT_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250', load_from_asr_pretrained='/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ASR_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250', save_model_to=PosixPath('/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST-MLT_tc-punc_lr6e-5_warmup2000_epoch10_bsz120_freq60_max30s_p10x250'), finetune_text_encoder=False, processor_path='/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_MT_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250_proc', save_processor_path='/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST-MLT_tc-punc_lr6e-5_warmup2000_epoch10_bsz120_freq60_max30s_p10x250_proc', learning_rate=6e-05, alpha=1.0, beta=1.0, gamma=2.0, kd_loss_type=<KdLossType.KLD: 'KLD'>, detach_teacher=True, warmup_steps=2000, batch_size=120, update_freq=60, max_text_tokens=128, max_speech_dur=30.0, device='cuda', mode=<FinetuneMode.MULTI_TASKING: 'MULTI_TASKING'>, eval_mode=<FinetuneMode.SPEECH_TO_TEXT: 'SPEECH_TO_TEXT'>, patience=10, max_epochs=10, eval_steps=250, log_steps=50, seed=42, untie_lm_head=True, prefix_skip_len=1, dropout_fix=True)
+2025-05-23 14:05:48 | INFO | __main__ | Set seed to 42
+2025-05-23 14:05:48 | INFO | __main__ | Will use real batch size 2 with gradient accumulation 60
+2025-05-23 14:05:48 | INFO | __main__ | The effective batch size is 120
+2025-05-23 14:05:48 | INFO | __main__ | Finetune Params: FinetuneParams(model_name='facebook/seamless-m4t-v2-large', save_model_path=PosixPath('/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST-MLT_tc-punc_lr6e-5_warmup2000_epoch10_bsz120_freq60_max30s_p10x250'), model_ver=<ModelVer.VER_2: 'VER_2'>, finetune_mode=<FinetuneMode.MULTI_TASKING: 'MULTI_TASKING'>, eval_mode=<FinetuneMode.SPEECH_TO_TEXT: 'SPEECH_TO_TEXT'>, finetune_text_encoder=False, train_batch_size=2, eval_batch_size=2, learning_rate=6e-05, alpha=1.0, beta=1.0, gamma=2.0, kd_loss_type=<KdLossType.KLD: 'KLD'>, detach_teacher=True, label_smoothing=0.2, prefix_skip_len=1, warmup_steps=2000, log_steps=50, eval_steps=250, update_freq=60, patience=10, max_epochs=10, float_dtype=torch.float16, device=device(type='cuda'))
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.93it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.81it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.83it/s]
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  4.28it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  6.62it/s]
+2025-05-23 14:05:59 | INFO | __main__ | Checked loaded params.
+2025-05-23 14:05:59 | INFO | __main__ | Loaded <class 'transformers.models.seamless_m4t_v2.modeling_seamless_m4t_v2.SeamlessM4Tv2ForSpeechToText'> from /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ASR_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.34it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.64it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.30it/s]
+2025-05-23 14:06:37 | INFO | __main__ | Checked all loaded params.
+2025-05-23 14:06:37 | INFO | __main__ | Loaded <class 'transformers.models.seamless_m4t_v2.modeling_seamless_m4t_v2.SeamlessM4Tv2ForTextToText'> from /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_MT_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250
+2025-05-23 14:06:37 | INFO | __main__ | embed_tokens.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.0.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.1.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.2.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.3.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.4.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.5.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.6.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.7.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.8.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.9.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.10.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.11.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.12.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.13.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.14.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.15.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.16.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.17.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.18.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.19.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.20.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.21.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.22.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.k_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.k_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.v_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.v_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.q_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.q_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.out_proj.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn.out_proj.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.self_attn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.ffn.fc1.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.ffn.fc1.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.ffn.fc2.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.ffn.fc2.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.ffn_layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layers.23.ffn_layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layer_norm.weight.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | layer_norm.bias.requires_grad -> False
+2025-05-23 14:06:37 | INFO | __main__ | Will untie lm head
+2025-05-23 14:06:40 | INFO | seamlessm4t.model_utils | Will update decoder's ffn_dropout
+2025-05-23 14:06:40 | INFO | seamlessm4t.model_utils | Will update adapter's attention score & ffn dropout
+2025-05-23 14:06:40 | INFO | utils.model_utils | Model:
+SeamlessM4Tv2Model(
+  (shared): Embedding(256102, 1024, padding_idx=0)
+  (text_encoder): SeamlessM4Tv2Encoder(
+    (embed_tokens): SeamlessM4Tv2ScaledWordEmbedding(256102, 1024, padding_idx=0)
+    (embed_positions): SeamlessM4Tv2SinusoidalPositionalEmbedding()
+    (layers): ModuleList(
+      (0-23): 24 x SeamlessM4Tv2EncoderLayer(
+        (self_attn): SeamlessM4Tv2Attention(
+          (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+        )
+        (attn_dropout): Dropout(p=0.1, inplace=False)
+        (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (ffn): SeamlessM4Tv2FeedForwardNetwork(
+          (fc1): Linear(in_features=1024, out_features=8192, bias=True)
+          (fc2): Linear(in_features=8192, out_features=1024, bias=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (act): ReLU()
+        )
+        (ffn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (ffn_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  )
+  (speech_encoder): SeamlessM4Tv2SpeechEncoder(
+    (feature_projection): SeamlessM4Tv2ConformerFeatureProjection(
+      (layer_norm): LayerNorm((160,), eps=1e-05, elementwise_affine=True)
+      (projection): Linear(in_features=160, out_features=1024, bias=True)
+      (dropout): Dropout(p=0.0, inplace=False)
+    )
+    (encoder): SeamlessM4Tv2ConformerEncoder(
+      (dropout): Dropout(p=0.0, inplace=False)
+      (layers): ModuleList(
+        (0-23): 24 x SeamlessM4Tv2ConformerEncoderLayer(
+          (ffn1_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (ffn1): SeamlessM4Tv2ConformerFeedForward(
+            (intermediate_dropout): Dropout(p=0.0, inplace=False)
+            (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+            (intermediate_act_fn): SiLU()
+            (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+            (output_dropout): Dropout(p=0.0, inplace=False)
+          )
+          (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (self_attn_dropout): Dropout(p=0.0, inplace=False)
+          (self_attn): SeamlessM4Tv2ConformerSelfAttention(
+            (linear_q): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_k): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_v): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_out): Linear(in_features=1024, out_features=1024, bias=True)
+            (dropout): Dropout(p=0.0, inplace=False)
+            (distance_embedding): Embedding(73, 64)
+          )
+          (conv_module): SeamlessM4Tv2ConformerConvolutionModule(
+            (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (pointwise_conv1): Conv1d(1024, 2048, kernel_size=(1,), stride=(1,), bias=False)
+            (glu): GLU(dim=1)
+            (depthwise_conv): Conv1d(1024, 1024, kernel_size=(31,), stride=(1,), groups=1024, bias=False)
+            (depthwise_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (activation): SiLU()
+            (pointwise_conv2): Conv1d(1024, 1024, kernel_size=(1,), stride=(1,), bias=False)
+            (dropout): Dropout(p=0.0, inplace=False)
+          )
+          (ffn2_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (ffn2): SeamlessM4Tv2ConformerFeedForward(
+            (intermediate_dropout): Dropout(p=0.0, inplace=False)
+            (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+            (intermediate_act_fn): SiLU()
+            (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+            (output_dropout): Dropout(p=0.0, inplace=False)
+          )
+          (final_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+      (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+    )
+    (intermediate_ffn): SeamlessM4Tv2ConformerFeedForward(
+      (intermediate_dropout): Dropout(p=0.0, inplace=False)
+      (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+      (intermediate_act_fn): ReLU()
+      (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+      (output_dropout): Dropout(p=0.0, inplace=False)
+    )
+    (adapter): SeamlessM4Tv2ConformerAdapter(
+      (layers): ModuleList(
+        (0): SeamlessM4Tv2ConformerAdapterLayer(
+          (residual_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (residual_conv): Conv1d(1024, 2048, kernel_size=(8,), stride=(8,), padding=(4,))
+          (activation): GLU(dim=1)
+          (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (self_attn_conv): Conv1d(1024, 2048, kernel_size=(8,), stride=(8,), padding=(4,))
+          (self_attn): SeamlessM4Tv2ConformerSelfAttention(
+            (linear_q): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_k): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_v): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_out): Linear(in_features=1024, out_features=1024, bias=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+          (self_attn_dropout): Dropout(p=0.1, inplace=False)
+          (ffn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (ffn): SeamlessM4Tv2ConformerFeedForward(
+            (intermediate_dropout): Dropout(p=0.0, inplace=False)
+            (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+            (intermediate_act_fn): ReLU()
+            (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+            (output_dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+    (inner_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  )
+  (text_decoder): SeamlessM4Tv2Decoder(
+    (embed_tokens): SeamlessM4Tv2ScaledWordEmbedding(256102, 1024, padding_idx=0)
+    (embed_positions): SeamlessM4Tv2SinusoidalPositionalEmbedding()
+    (layers): ModuleList(
+      (0-23): 24 x SeamlessM4Tv2DecoderLayer(
+        (self_attn): SeamlessM4Tv2Attention(
+          (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+        )
+        (activation_fn): ReLU()
+        (attn_dropout): Dropout(p=0.1, inplace=False)
+        (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (cross_attention): SeamlessM4Tv2Attention(
+          (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+        )
+        (cross_attention_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (ffn): SeamlessM4Tv2FeedForwardNetwork(
+          (fc1): Linear(in_features=1024, out_features=8192, bias=True)
+          (fc2): Linear(in_features=8192, out_features=1024, bias=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (act): ReLU()
+        )
+        (ffn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  )
+  (lm_head): Linear(in_features=1024, out_features=256102, bias=False)
+  (t2u_model): None
+  (vocoder): None
+)
+2025-05-23 14:06:40 | INFO | utils.model_utils | Total num params: 2530.08M
+2025-05-23 14:06:40 | INFO | utils.model_utils | Trainable num params: 1764.09M
+2025-05-23 14:06:40 | INFO | __main__ | Load processor from /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_MT_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250_proc
+2025-05-23 14:06:42 | INFO | __main__ | Adding bem to model
+2025-05-23 14:06:42 | INFO | __main__ | Save process to /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST-MLT_tc-punc_lr6e-5_warmup2000_epoch10_bsz120_freq60_max30s_p10x250_proc
+2025-05-23 14:06:43 | INFO | seamlessm4t.dataloader | Init data mode=FinetuneMode.MULTI_TASKING
+2025-05-23 14:06:43 | INFO | seamlessm4t.dataloader | Batch config: BatchingConfig(max_text_tokens=128, max_speech_frames=480000, batch_size=2, num_workers=2, float_dtype=torch.float16)
+2025-05-23 14:06:43 | INFO | seamlessm4t.dataloader | Init data mode=FinetuneMode.SPEECH_TO_TEXT
+2025-05-23 14:06:43 | INFO | seamlessm4t.dataloader | Batch config: BatchingConfig(max_text_tokens=128, max_speech_frames=480000, batch_size=2, num_workers=1, float_dtype=torch.float16)
+2025-05-23 14:06:48 | INFO | seamlessm4t.trainer | CalcLoss: 256102 classes neg=7.809388446790732e-07 | pos=0.8000007809388447 Kd Loss Type: KdLossType.KLD Detach Teacher: True prefix skip len: 1
+2025-05-23 14:06:49 | INFO | seamlessm4t.trainer | Start Finetuning
+2025-05-23 14:06:49 | INFO | seamlessm4t.trainer | Evaluation Step 0...
+2025-05-23 14:08:39 | INFO | seamlessm4t.trainer | Eval after 0 updates: tot_loss=4.8678 best_loss=4.8678 patience_steps_left=10
+2025-05-23 14:23:57 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 50 total update 00050: train_loss=10.5390 last_lr=1.50E-06 peak_cuda_mem=54.32GB bsz=120.0 n_tokens=8523840.0 nll_loss=4.7742 teacher_nll=3.7617 kd_loss=1.0016 
+2025-05-23 14:39:14 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 100 total update 00100: train_loss=9.9780 last_lr=3.00E-06 peak_cuda_mem=51.83GB bsz=120.0 n_tokens=8558988.8 nll_loss=4.5805 teacher_nll=3.7714 kd_loss=0.8130 
+2025-05-23 14:54:33 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 150 total update 00150: train_loss=9.5386 last_lr=4.50E-06 peak_cuda_mem=53.69GB bsz=120.0 n_tokens=8606124.8 nll_loss=4.4335 teacher_nll=3.7732 kd_loss=0.6660 
+2025-05-23 15:09:55 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 200 total update 00200: train_loss=9.2300 last_lr=6.00E-06 peak_cuda_mem=60.92GB bsz=120.0 n_tokens=8576160.0 nll_loss=4.3314 teacher_nll=3.7718 kd_loss=0.5634 
+2025-05-23 15:25:18 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 250 total update 00250: train_loss=9.0064 last_lr=7.50E-06 peak_cuda_mem=56.21GB bsz=120.0 n_tokens=8540665.6 nll_loss=4.2556 teacher_nll=3.7804 kd_loss=0.4852 
+2025-05-23 15:25:18 | INFO | seamlessm4t.trainer | Evaluation Step 1...
+2025-05-23 15:27:35 | INFO | seamlessm4t.trainer | Eval after 250 updates: tot_loss=4.2510 best_loss=4.2510 patience_steps_left=10
+2025-05-23 15:27:35 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 15:43:12 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 300 total update 00300: train_loss=8.8248 last_lr=9.00E-06 peak_cuda_mem=54.33GB bsz=120.0 n_tokens=8583168.0 nll_loss=4.1905 teacher_nll=3.7769 kd_loss=0.4287 
+2025-05-23 15:58:38 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 350 total update 00350: train_loss=8.6981 last_lr=1.05E-05 peak_cuda_mem=60.94GB bsz=120.0 n_tokens=8612934.4 nll_loss=4.1438 teacher_nll=3.7775 kd_loss=0.3884 
+2025-05-23 16:14:01 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 400 total update 00400: train_loss=8.6245 last_lr=1.20E-05 peak_cuda_mem=52.05GB bsz=120.0 n_tokens=8573638.4 nll_loss=4.1117 teacher_nll=3.7725 kd_loss=0.3701 
+2025-05-23 16:29:25 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 450 total update 00450: train_loss=8.5414 last_lr=1.35E-05 peak_cuda_mem=52.19GB bsz=120.0 n_tokens=8589548.8 nll_loss=4.0819 teacher_nll=3.7788 kd_loss=0.3404 
+2025-05-23 16:45:09 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 500 total update 00500: train_loss=8.4699 last_lr=1.50E-05 peak_cuda_mem=61.73GB bsz=120.0 n_tokens=8548083.2 nll_loss=4.0553 teacher_nll=3.7645 kd_loss=0.3251 
+2025-05-23 16:45:09 | INFO | seamlessm4t.trainer | Evaluation Step 2...
+2025-05-23 16:47:29 | INFO | seamlessm4t.trainer | Eval after 500 updates: tot_loss=4.1094 best_loss=4.1094 patience_steps_left=10
+2025-05-23 16:47:29 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 17:03:09 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 550 total update 00550: train_loss=8.4432 last_lr=1.65E-05 peak_cuda_mem=64.47GB bsz=120.0 n_tokens=8547692.8 nll_loss=4.0465 teacher_nll=3.7714 kd_loss=0.3127 
+2025-05-23 17:18:37 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 600 total update 00600: train_loss=8.3712 last_lr=1.80E-05 peak_cuda_mem=55.60GB bsz=120.0 n_tokens=8571232.0 nll_loss=4.0183 teacher_nll=3.7613 kd_loss=0.2958 
+2025-05-23 17:34:07 | INFO | seamlessm4t.trainer | Epoch 001 (685 steps) / update 650 total update 00650: train_loss=8.3613 last_lr=1.95E-05 peak_cuda_mem=55.18GB bsz=120.0 n_tokens=8585971.2 nll_loss=4.0150 teacher_nll=3.7690 kd_loss=0.2886 
+2025-05-23 17:49:34 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 15 total update 00700: train_loss=8.3327 last_lr=2.10E-05 peak_cuda_mem=60.99GB bsz=120.0 n_tokens=8480812.8 nll_loss=4.0057 teacher_nll=3.7702 kd_loss=0.2784 
+2025-05-23 18:05:06 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 65 total update 00750: train_loss=8.2969 last_lr=2.25E-05 peak_cuda_mem=58.38GB bsz=120.0 n_tokens=8652960.0 nll_loss=3.9917 teacher_nll=3.7757 kd_loss=0.2648 
+2025-05-23 18:05:06 | INFO | seamlessm4t.trainer | Evaluation Step 3...
+2025-05-23 18:07:26 | INFO | seamlessm4t.trainer | Eval after 750 updates: tot_loss=4.0601 best_loss=4.0601 patience_steps_left=10
+2025-05-23 18:07:26 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 18:23:15 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 115 total update 00800: train_loss=8.2617 last_lr=2.40E-05 peak_cuda_mem=59.43GB bsz=120.0 n_tokens=8561984.0 nll_loss=3.9765 teacher_nll=3.7640 kd_loss=0.2607 
+2025-05-23 18:38:48 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 165 total update 00850: train_loss=8.2529 last_lr=2.55E-05 peak_cuda_mem=60.55GB bsz=120.0 n_tokens=8518822.4 nll_loss=3.9730 teacher_nll=3.7659 kd_loss=0.2570 
+2025-05-23 18:54:17 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 215 total update 00900: train_loss=8.2277 last_lr=2.70E-05 peak_cuda_mem=52.68GB bsz=120.0 n_tokens=8470496.0 nll_loss=3.9642 teacher_nll=3.7632 kd_loss=0.2501 
+2025-05-23 19:09:51 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 265 total update 00950: train_loss=8.2332 last_lr=2.85E-05 peak_cuda_mem=53.58GB bsz=120.0 n_tokens=8546323.2 nll_loss=3.9690 teacher_nll=3.7730 kd_loss=0.2456 
+2025-05-23 19:25:28 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 315 total update 01000: train_loss=8.2316 last_lr=3.00E-05 peak_cuda_mem=55.39GB bsz=120.0 n_tokens=8617510.4 nll_loss=3.9674 teacher_nll=3.7712 kd_loss=0.2465 
+2025-05-23 19:25:29 | INFO | seamlessm4t.trainer | Evaluation Step 4...
+2025-05-23 19:27:50 | INFO | seamlessm4t.trainer | Eval after 1000 updates: tot_loss=4.0334 best_loss=4.0334 patience_steps_left=10
+2025-05-23 19:27:50 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 19:43:42 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 365 total update 01050: train_loss=8.1939 last_lr=3.15E-05 peak_cuda_mem=55.50GB bsz=120.0 n_tokens=8569990.4 nll_loss=3.9519 teacher_nll=3.7643 kd_loss=0.2389 
+2025-05-23 19:59:15 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 415 total update 01100: train_loss=8.1864 last_lr=3.30E-05 peak_cuda_mem=62.26GB bsz=120.0 n_tokens=8505670.4 nll_loss=3.9487 teacher_nll=3.7636 kd_loss=0.2371 
+2025-05-23 20:14:47 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 465 total update 01150: train_loss=8.1989 last_lr=3.45E-05 peak_cuda_mem=51.98GB bsz=120.0 n_tokens=8607187.2 nll_loss=3.9561 teacher_nll=3.7660 kd_loss=0.2384 
+2025-05-23 20:30:21 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 515 total update 01200: train_loss=8.1854 last_lr=3.60E-05 peak_cuda_mem=51.83GB bsz=120.0 n_tokens=8534521.6 nll_loss=3.9478 teacher_nll=3.7638 kd_loss=0.2369 
+2025-05-23 20:45:52 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 565 total update 01250: train_loss=8.1751 last_lr=3.75E-05 peak_cuda_mem=53.69GB bsz=120.0 n_tokens=8484793.6 nll_loss=3.9447 teacher_nll=3.7684 kd_loss=0.2310 
+2025-05-23 20:45:52 | INFO | seamlessm4t.trainer | Evaluation Step 5...
+2025-05-23 20:48:13 | INFO | seamlessm4t.trainer | Eval after 1250 updates: tot_loss=4.0156 best_loss=4.0156 patience_steps_left=10
+2025-05-23 20:48:13 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 21:04:01 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 615 total update 01300: train_loss=8.1750 last_lr=3.90E-05 peak_cuda_mem=52.05GB bsz=120.0 n_tokens=8574969.6 nll_loss=3.9455 teacher_nll=3.7667 kd_loss=0.2314 
+2025-05-23 21:19:37 | INFO | seamlessm4t.trainer | Epoch 002 (685 steps) / update 665 total update 01350: train_loss=8.1616 last_lr=4.05E-05 peak_cuda_mem=48.48GB bsz=120.0 n_tokens=8590854.4 nll_loss=3.9402 teacher_nll=3.7645 kd_loss=0.2285 
+2025-05-23 21:35:10 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 30 total update 01400: train_loss=8.1246 last_lr=4.20E-05 peak_cuda_mem=56.48GB bsz=120.0 n_tokens=8566694.4 nll_loss=3.9231 teacher_nll=3.7599 kd_loss=0.2208 
+2025-05-23 21:50:40 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 80 total update 01450: train_loss=8.0699 last_lr=4.35E-05 peak_cuda_mem=54.45GB bsz=120.0 n_tokens=8561241.6 nll_loss=3.8962 teacher_nll=3.7472 kd_loss=0.2133 
+2025-05-23 22:06:10 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 130 total update 01500: train_loss=8.0823 last_lr=4.50E-05 peak_cuda_mem=54.30GB bsz=120.0 n_tokens=8524262.4 nll_loss=3.8973 teacher_nll=3.7532 kd_loss=0.2159 
+2025-05-23 22:06:10 | INFO | seamlessm4t.trainer | Evaluation Step 6...
+2025-05-23 22:08:30 | INFO | seamlessm4t.trainer | Eval after 1500 updates: tot_loss=4.0130 best_loss=4.0130 patience_steps_left=10
+2025-05-23 22:08:30 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 22:24:20 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 180 total update 01550: train_loss=8.0683 last_lr=4.65E-05 peak_cuda_mem=60.82GB bsz=120.0 n_tokens=8561728.0 nll_loss=3.8944 teacher_nll=3.7460 kd_loss=0.2139 
+2025-05-23 22:39:44 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 230 total update 01600: train_loss=8.0855 last_lr=4.80E-05 peak_cuda_mem=56.55GB bsz=120.0 n_tokens=8598246.4 nll_loss=3.9037 teacher_nll=3.7515 kd_loss=0.2152 
+2025-05-23 22:54:54 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 280 total update 01650: train_loss=8.0859 last_lr=4.95E-05 peak_cuda_mem=56.33GB bsz=120.0 n_tokens=8548972.8 nll_loss=3.9037 teacher_nll=3.7570 kd_loss=0.2126 
+2025-05-23 23:10:01 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 330 total update 01700: train_loss=8.0880 last_lr=5.10E-05 peak_cuda_mem=61.05GB bsz=120.0 n_tokens=8570860.8 nll_loss=3.9035 teacher_nll=3.7537 kd_loss=0.2154 
+2025-05-23 23:25:01 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 380 total update 01750: train_loss=8.1020 last_lr=5.25E-05 peak_cuda_mem=54.08GB bsz=120.0 n_tokens=8590982.4 nll_loss=3.9113 teacher_nll=3.7637 kd_loss=0.2135 
+2025-05-23 23:25:01 | INFO | seamlessm4t.trainer | Evaluation Step 7...
+2025-05-23 23:27:21 | INFO | seamlessm4t.trainer | Eval after 1750 updates: tot_loss=4.0008 best_loss=4.0008 patience_steps_left=10
+2025-05-23 23:27:21 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 23:42:58 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 430 total update 01800: train_loss=8.0829 last_lr=5.40E-05 peak_cuda_mem=56.17GB bsz=120.0 n_tokens=8578560.0 nll_loss=3.9043 teacher_nll=3.7551 kd_loss=0.2118 
+2025-05-23 23:58:03 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 480 total update 01850: train_loss=8.1115 last_lr=5.55E-05 peak_cuda_mem=53.98GB bsz=120.0 n_tokens=8518745.6 nll_loss=3.9159 teacher_nll=3.7655 kd_loss=0.2150 
+2025-05-24 00:13:12 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 530 total update 01900: train_loss=8.1092 last_lr=5.70E-05 peak_cuda_mem=53.95GB bsz=120.0 n_tokens=8580012.8 nll_loss=3.9165 teacher_nll=3.7661 kd_loss=0.2133 
+2025-05-24 00:28:20 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 580 total update 01950: train_loss=8.0686 last_lr=5.85E-05 peak_cuda_mem=63.08GB bsz=120.0 n_tokens=8599609.6 nll_loss=3.8956 teacher_nll=3.7514 kd_loss=0.2108 
+2025-05-24 00:43:27 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 630 total update 02000: train_loss=8.0746 last_lr=6.00E-05 peak_cuda_mem=48.55GB bsz=120.0 n_tokens=8551392.0 nll_loss=3.9013 teacher_nll=3.7565 kd_loss=0.2084 
+2025-05-24 00:43:27 | INFO | seamlessm4t.trainer | Evaluation Step 8...
+2025-05-24 00:45:46 | INFO | seamlessm4t.trainer | Eval after 2000 updates: tot_loss=4.0039 best_loss=4.0008 patience_steps_left=9
+2025-05-24 01:00:57 | INFO | seamlessm4t.trainer | Epoch 003 (685 steps) / update 680 total update 02050: train_loss=8.0931 last_lr=5.93E-05 peak_cuda_mem=50.83GB bsz=120.0 n_tokens=8512889.6 nll_loss=3.9085 teacher_nll=3.7636 kd_loss=0.2105 
+2025-05-24 01:16:11 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 45 total update 02100: train_loss=7.9839 last_lr=5.86E-05 peak_cuda_mem=62.98GB bsz=120.0 n_tokens=8582540.8 nll_loss=3.8538 teacher_nll=3.7320 kd_loss=0.1990 
+2025-05-24 01:31:25 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 95 total update 02150: train_loss=7.9666 last_lr=5.79E-05 peak_cuda_mem=52.15GB bsz=120.0 n_tokens=8566707.2 nll_loss=3.8422 teacher_nll=3.7228 kd_loss=0.2008 
+2025-05-24 01:46:34 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 145 total update 02200: train_loss=7.9909 last_lr=5.72E-05 peak_cuda_mem=52.83GB bsz=120.0 n_tokens=8510636.8 nll_loss=3.8552 teacher_nll=3.7344 kd_loss=0.2007 
+2025-05-24 02:01:42 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 195 total update 02250: train_loss=7.9977 last_lr=5.66E-05 peak_cuda_mem=52.60GB bsz=120.0 n_tokens=8477004.8 nll_loss=3.8561 teacher_nll=3.7369 kd_loss=0.2024 
+2025-05-24 02:01:42 | INFO | seamlessm4t.trainer | Evaluation Step 9...
+2025-05-24 02:04:02 | INFO | seamlessm4t.trainer | Eval after 2250 updates: tot_loss=3.9978 best_loss=3.9978 patience_steps_left=10
+2025-05-24 02:04:02 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 02:19:33 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 245 total update 02300: train_loss=7.9889 last_lr=5.60E-05 peak_cuda_mem=56.23GB bsz=120.0 n_tokens=8552838.4 nll_loss=3.8537 teacher_nll=3.7343 kd_loss=0.2004 
+2025-05-24 02:34:46 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 295 total update 02350: train_loss=7.9736 last_lr=5.54E-05 peak_cuda_mem=56.13GB bsz=120.0 n_tokens=8554707.2 nll_loss=3.8482 teacher_nll=3.7274 kd_loss=0.1990 
+2025-05-24 02:50:04 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 345 total update 02400: train_loss=7.9753 last_lr=5.48E-05 peak_cuda_mem=55.70GB bsz=120.0 n_tokens=8589286.4 nll_loss=3.8479 teacher_nll=3.7350 kd_loss=0.1962 
+2025-05-24 03:05:26 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 395 total update 02450: train_loss=7.9842 last_lr=5.42E-05 peak_cuda_mem=57.42GB bsz=120.0 n_tokens=8625126.4 nll_loss=3.8547 teacher_nll=3.7342 kd_loss=0.1976 
+2025-05-24 03:20:41 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 445 total update 02500: train_loss=8.0038 last_lr=5.37E-05 peak_cuda_mem=60.08GB bsz=120.0 n_tokens=8515328.0 nll_loss=3.8583 teacher_nll=3.7412 kd_loss=0.2021 
+2025-05-24 03:20:41 | INFO | seamlessm4t.trainer | Evaluation Step 10...
+2025-05-24 03:23:01 | INFO | seamlessm4t.trainer | Eval after 2500 updates: tot_loss=3.9863 best_loss=3.9863 patience_steps_left=10
+2025-05-24 03:23:02 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 03:38:36 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 495 total update 02550: train_loss=7.9789 last_lr=5.31E-05 peak_cuda_mem=58.69GB bsz=120.0 n_tokens=8547532.8 nll_loss=3.8531 teacher_nll=3.7375 kd_loss=0.1942 
+2025-05-24 03:53:52 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 545 total update 02600: train_loss=7.9693 last_lr=5.26E-05 peak_cuda_mem=51.10GB bsz=120.0 n_tokens=8581190.4 nll_loss=3.8455 teacher_nll=3.7286 kd_loss=0.1976 
+2025-05-24 04:09:03 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 595 total update 02650: train_loss=7.9915 last_lr=5.21E-05 peak_cuda_mem=59.58GB bsz=120.0 n_tokens=8495168.0 nll_loss=3.8553 teacher_nll=3.7395 kd_loss=0.1983 
+2025-05-24 04:24:19 | INFO | seamlessm4t.trainer | Epoch 004 (685 steps) / update 645 total update 02700: train_loss=7.9775 last_lr=5.16E-05 peak_cuda_mem=63.13GB bsz=120.0 n_tokens=8604435.2 nll_loss=3.8488 teacher_nll=3.7316 kd_loss=0.1985 
+2025-05-24 04:39:32 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 10 total update 02750: train_loss=7.9734 last_lr=5.12E-05 peak_cuda_mem=52.14GB bsz=120.0 n_tokens=8578016.0 nll_loss=3.8507 teacher_nll=3.7362 kd_loss=0.1932 
+2025-05-24 04:39:32 | INFO | seamlessm4t.trainer | Evaluation Step 11...
+2025-05-24 04:41:52 | INFO | seamlessm4t.trainer | Eval after 2750 updates: tot_loss=3.9849 best_loss=3.9849 patience_steps_left=10
+2025-05-24 04:41:52 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 04:57:26 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 60 total update 02800: train_loss=7.8621 last_lr=5.07E-05 peak_cuda_mem=57.33GB bsz=120.0 n_tokens=8585657.6 nll_loss=3.7903 teacher_nll=3.6948 kd_loss=0.1885 
+2025-05-24 05:12:38 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 110 total update 02850: train_loss=7.8934 last_lr=5.03E-05 peak_cuda_mem=51.90GB bsz=120.0 n_tokens=8564793.6 nll_loss=3.8039 teacher_nll=3.7174 kd_loss=0.1860 
+2025-05-24 05:27:47 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 160 total update 02900: train_loss=7.8704 last_lr=4.98E-05 peak_cuda_mem=53.39GB bsz=120.0 n_tokens=8542169.6 nll_loss=3.7893 teacher_nll=3.6994 kd_loss=0.1909 
+2025-05-24 05:43:02 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 210 total update 02950: train_loss=7.8895 last_lr=4.94E-05 peak_cuda_mem=56.10GB bsz=120.0 n_tokens=8609996.8 nll_loss=3.8022 teacher_nll=3.7064 kd_loss=0.1904 
+2025-05-24 05:58:05 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 260 total update 03000: train_loss=7.8668 last_lr=4.90E-05 peak_cuda_mem=52.98GB bsz=120.0 n_tokens=8558912.0 nll_loss=3.7913 teacher_nll=3.6965 kd_loss=0.1895 
+2025-05-24 05:58:05 | INFO | seamlessm4t.trainer | Evaluation Step 12...
+2025-05-24 06:00:24 | INFO | seamlessm4t.trainer | Eval after 3000 updates: tot_loss=3.9898 best_loss=3.9849 patience_steps_left=9
+2025-05-24 06:15:38 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 310 total update 03050: train_loss=7.8952 last_lr=4.86E-05 peak_cuda_mem=60.72GB bsz=120.0 n_tokens=8535264.0 nll_loss=3.8040 teacher_nll=3.7100 kd_loss=0.1906 
+2025-05-24 06:30:51 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 360 total update 03100: train_loss=7.8895 last_lr=4.82E-05 peak_cuda_mem=50.81GB bsz=120.0 n_tokens=8508000.0 nll_loss=3.8007 teacher_nll=3.7123 kd_loss=0.1883 
+2025-05-24 06:46:05 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 410 total update 03150: train_loss=7.8845 last_lr=4.78E-05 peak_cuda_mem=50.92GB bsz=120.0 n_tokens=8555475.2 nll_loss=3.7980 teacher_nll=3.7065 kd_loss=0.1900 
+2025-05-24 07:01:23 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 460 total update 03200: train_loss=7.8795 last_lr=4.74E-05 peak_cuda_mem=61.29GB bsz=120.0 n_tokens=8589625.6 nll_loss=3.7978 teacher_nll=3.7075 kd_loss=0.1871 
+2025-05-24 07:16:35 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 510 total update 03250: train_loss=7.8774 last_lr=4.71E-05 peak_cuda_mem=48.43GB bsz=120.0 n_tokens=8475040.0 nll_loss=3.7973 teacher_nll=3.7074 kd_loss=0.1863 
+2025-05-24 07:16:35 | INFO | seamlessm4t.trainer | Evaluation Step 13...
+2025-05-24 07:18:55 | INFO | seamlessm4t.trainer | Eval after 3250 updates: tot_loss=3.9822 best_loss=3.9822 patience_steps_left=10
+2025-05-24 07:18:55 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 07:34:28 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 560 total update 03300: train_loss=7.8688 last_lr=4.67E-05 peak_cuda_mem=50.21GB bsz=120.0 n_tokens=8557388.8 nll_loss=3.7955 teacher_nll=3.7061 kd_loss=0.1836 
+2025-05-24 07:49:40 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 610 total update 03350: train_loss=7.8804 last_lr=4.64E-05 peak_cuda_mem=56.89GB bsz=120.0 n_tokens=8505696.0 nll_loss=3.7996 teacher_nll=3.7079 kd_loss=0.1864 
+2025-05-24 08:04:55 | INFO | seamlessm4t.trainer | Epoch 005 (685 steps) / update 660 total update 03400: train_loss=7.8983 last_lr=4.60E-05 peak_cuda_mem=61.81GB bsz=120.0 n_tokens=8621318.4 nll_loss=3.8074 teacher_nll=3.7109 kd_loss=0.1900 
+2025-05-24 08:20:10 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 25 total update 03450: train_loss=7.8449 last_lr=4.57E-05 peak_cuda_mem=57.50GB bsz=120.0 n_tokens=8569222.4 nll_loss=3.7747 teacher_nll=3.6940 kd_loss=0.1881 
+2025-05-24 08:35:26 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 75 total update 03500: train_loss=7.7949 last_lr=4.54E-05 peak_cuda_mem=48.98GB bsz=120.0 n_tokens=8559040.0 nll_loss=3.7491 teacher_nll=3.6782 kd_loss=0.1838 
+2025-05-24 08:35:26 | INFO | seamlessm4t.trainer | Evaluation Step 14...
+2025-05-24 08:37:47 | INFO | seamlessm4t.trainer | Eval after 3500 updates: tot_loss=3.9812 best_loss=3.9812 patience_steps_left=10
+2025-05-24 08:37:47 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 08:53:22 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 125 total update 03550: train_loss=7.7782 last_lr=4.50E-05 peak_cuda_mem=49.32GB bsz=120.0 n_tokens=8512595.2 nll_loss=3.7442 teacher_nll=3.6745 kd_loss=0.1797 
+2025-05-24 09:08:36 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 175 total update 03600: train_loss=7.8139 last_lr=4.47E-05 peak_cuda_mem=61.89GB bsz=120.0 n_tokens=8519097.6 nll_loss=3.7600 teacher_nll=3.6867 kd_loss=0.1836 
+2025-05-24 09:23:49 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 225 total update 03650: train_loss=7.8103 last_lr=4.44E-05 peak_cuda_mem=61.98GB bsz=120.0 n_tokens=8552044.8 nll_loss=3.7570 teacher_nll=3.6868 kd_loss=0.1832 
+2025-05-24 09:38:35 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 275 total update 03700: train_loss=7.8273 last_lr=4.41E-05 peak_cuda_mem=55.98GB bsz=120.0 n_tokens=8512473.6 nll_loss=3.7636 teacher_nll=3.6905 kd_loss=0.1866 
+2025-05-24 09:53:12 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 325 total update 03750: train_loss=7.8313 last_lr=4.38E-05 peak_cuda_mem=54.89GB bsz=120.0 n_tokens=8600524.8 nll_loss=3.7684 teacher_nll=3.6934 kd_loss=0.1848 
+2025-05-24 09:53:12 | INFO | seamlessm4t.trainer | Evaluation Step 15...
+2025-05-24 09:55:33 | INFO | seamlessm4t.trainer | Eval after 3750 updates: tot_loss=3.9794 best_loss=3.9794 patience_steps_left=10
+2025-05-24 09:55:33 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 10:11:04 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 375 total update 03800: train_loss=7.7958 last_lr=4.35E-05 peak_cuda_mem=56.40GB bsz=120.0 n_tokens=8567731.2 nll_loss=3.7539 teacher_nll=3.6811 kd_loss=0.1804 
+2025-05-24 10:26:15 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 425 total update 03850: train_loss=7.8166 last_lr=4.32E-05 peak_cuda_mem=53.26GB bsz=120.0 n_tokens=8592512.0 nll_loss=3.7616 teacher_nll=3.6894 kd_loss=0.1828 
+2025-05-24 10:41:25 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 475 total update 03900: train_loss=7.7995 last_lr=4.30E-05 peak_cuda_mem=57.61GB bsz=120.0 n_tokens=8540492.8 nll_loss=3.7545 teacher_nll=3.6813 kd_loss=0.1819 
+2025-05-24 10:56:39 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 525 total update 03950: train_loss=7.7897 last_lr=4.27E-05 peak_cuda_mem=62.90GB bsz=120.0 n_tokens=8613939.2 nll_loss=3.7476 teacher_nll=3.6771 kd_loss=0.1824 
+2025-05-24 11:11:49 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 575 total update 04000: train_loss=7.8166 last_lr=4.24E-05 peak_cuda_mem=48.82GB bsz=120.0 n_tokens=8534969.6 nll_loss=3.7612 teacher_nll=3.6852 kd_loss=0.1851 
+2025-05-24 11:11:49 | INFO | seamlessm4t.trainer | Evaluation Step 16...
+2025-05-24 11:14:11 | INFO | seamlessm4t.trainer | Eval after 4000 updates: tot_loss=3.9779 best_loss=3.9779 patience_steps_left=10
+2025-05-24 11:14:11 | INFO | seamlessm4t.trainer | Saving model
+2025-05-24 11:29:46 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 625 total update 04050: train_loss=7.8144 last_lr=4.22E-05 peak_cuda_mem=55.71GB bsz=120.0 n_tokens=8657523.2 nll_loss=3.7607 teacher_nll=3.6865 kd_loss=0.1836 
+2025-05-24 11:44:56 | INFO | seamlessm4t.trainer | Epoch 006 (685 steps) / update 675 total update 04100: train_loss=7.7950 last_lr=4.19E-05 peak_cuda_mem=55.55GB bsz=120.0 n_tokens=8478931.2 nll_loss=3.7506 teacher_nll=3.6793 kd_loss=0.1825 
+2025-05-24 12:00:11 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 40 total update 04150: train_loss=7.7612 last_lr=4.17E-05 peak_cuda_mem=51.34GB bsz=120.0 n_tokens=8618022.4 nll_loss=3.7295 teacher_nll=3.6696 kd_loss=0.1811 
+2025-05-24 12:15:24 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 90 total update 04200: train_loss=7.7432 last_lr=4.14E-05 peak_cuda_mem=60.83GB bsz=120.0 n_tokens=8562451.2 nll_loss=3.7178 teacher_nll=3.6627 kd_loss=0.1814 
+2025-05-24 12:30:40 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 140 total update 04250: train_loss=7.7153 last_lr=4.12E-05 peak_cuda_mem=56.58GB bsz=120.0 n_tokens=8603430.4 nll_loss=3.7071 teacher_nll=3.6538 kd_loss=0.1771 
+2025-05-24 12:30:40 | INFO | seamlessm4t.trainer | Evaluation Step 17...
+2025-05-24 12:33:00 | INFO | seamlessm4t.trainer | Eval after 4250 updates: tot_loss=3.9813 best_loss=3.9779 patience_steps_left=9
+2025-05-24 12:48:13 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 190 total update 04300: train_loss=7.7222 last_lr=4.09E-05 peak_cuda_mem=59.07GB bsz=120.0 n_tokens=8568902.4 nll_loss=3.7109 teacher_nll=3.6549 kd_loss=0.1782 
+2025-05-24 13:03:26 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 240 total update 04350: train_loss=7.7371 last_lr=4.07E-05 peak_cuda_mem=55.09GB bsz=120.0 n_tokens=8600588.8 nll_loss=3.7168 teacher_nll=3.6639 kd_loss=0.1781 
+2025-05-24 13:18:32 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 290 total update 04400: train_loss=7.7171 last_lr=4.05E-05 peak_cuda_mem=49.77GB bsz=120.0 n_tokens=8472780.8 nll_loss=3.7080 teacher_nll=3.6550 kd_loss=0.1771 
+2025-05-24 13:33:30 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 340 total update 04450: train_loss=7.7714 last_lr=4.02E-05 peak_cuda_mem=53.97GB bsz=120.0 n_tokens=8548428.8 nll_loss=3.7297 teacher_nll=3.6706 kd_loss=0.1855 
+2025-05-24 13:48:25 | INFO | seamlessm4t.trainer | Epoch 007 (685 steps) / update 390 total update 04500: train_loss=7.7392 last_lr=4.00E-05 peak_cuda_mem=50.94GB bsz=120.0 n_tokens=8580614.4 nll_loss=3.7167 teacher_nll=3.6621 kd_loss=0.1802 
+2025-05-24 13:48:25 | INFO | seamlessm4t.trainer | Evaluation Step 18...
+2025-05-24 13:50:46 | INFO | seamlessm4t.trainer | Eval after 4500 updates: tot_loss=3.9793 best_loss=3.9779 patience_steps_left=8 

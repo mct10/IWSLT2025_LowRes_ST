@@ -1,0 +1,162 @@
++ python -m nllb.finetune --src_lang bem_Latn --tgt_lang eng_Latn --train_dataset /scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mt.tc.punc.train.tsv --eval_dataset /scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mt.tc.punc.valid.tsv --model_name facebook/nllb-200-distilled-1.3B --save_model_to /scratch/cmeng2/experiments/iwslt2025-lres-st-os-nllb/bem-eng/bigc/ckpts/D1.3B_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250 --learning_rate 1e-4 --warmup_steps 1000 --max_epochs 10 --batch_size 256 --update_freq 8 --max_src_tokens 128 --eval_steps 250 --patience 10 --log_steps 50
+2025-05-22 16:27:33 | INFO | __main__ | Namespace(src_lang='bem_Latn', tgt_lang='eng_Latn', train_dataset=PosixPath('/scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mt.tc.punc.train.tsv'), eval_dataset=PosixPath('/scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/mt.tc.punc.valid.tsv'), model_name='facebook/nllb-200-distilled-1.3B', save_model_to=PosixPath('/scratch/cmeng2/experiments/iwslt2025-lres-st-os-nllb/bem-eng/bigc/ckpts/D1.3B_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250'), learning_rate=0.0001, warmup_steps=1000, batch_size=256, update_freq=8, max_src_tokens=128, device='cuda', patience=10, max_epochs=10, eval_steps=250, log_steps=50, seed=42)
+2025-05-22 16:27:33 | INFO | __main__ | Set seed to 42
+2025-05-22 16:27:33 | INFO | __main__ | Will use real batch size 32 with gradient accumulation 8
+2025-05-22 16:27:33 | INFO | __main__ | The effective batch size is 256
+2025-05-22 16:27:33 | INFO | __main__ | Finetune Params: FinetuneParams(model_name='facebook/nllb-200-distilled-1.3B', save_model_path=PosixPath('/scratch/cmeng2/experiments/iwslt2025-lres-st-os-nllb/bem-eng/bigc/ckpts/D1.3B_tc-punc_lr1e-4_warmup1000_epoch10_bsz256_freq8_max128_p10x250'), train_batch_size=32, eval_batch_size=32, learning_rate=0.0001, label_smoothing=0.2, warmup_steps=1000, log_steps=50, eval_steps=250, update_freq=8, patience=10, max_epochs=10, float_dtype=torch.float16, device=device(type='cuda'))
+2025-05-22 16:27:47 | INFO | utils.model_utils | Model:
+M2M100ForConditionalGeneration(
+  (model): M2M100Model(
+    (shared): M2M100ScaledWordEmbedding(256206, 1024, padding_idx=1)
+    (encoder): M2M100Encoder(
+      (embed_tokens): M2M100ScaledWordEmbedding(256206, 1024, padding_idx=1)
+      (embed_positions): M2M100SinusoidalPositionalEmbedding()
+      (layers): ModuleList(
+        (0-23): 24 x M2M100EncoderLayer(
+          (self_attn): M2M100SdpaAttention(
+            (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          )
+          (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (activation_fn): ReLU()
+          (fc1): Linear(in_features=1024, out_features=8192, bias=True)
+          (fc2): Linear(in_features=8192, out_features=1024, bias=True)
+          (final_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+      (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+    )
+    (decoder): M2M100Decoder(
+      (embed_tokens): M2M100ScaledWordEmbedding(256206, 1024, padding_idx=1)
+      (embed_positions): M2M100SinusoidalPositionalEmbedding()
+      (layers): ModuleList(
+        (0-23): 24 x M2M100DecoderLayer(
+          (self_attn): M2M100SdpaAttention(
+            (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          )
+          (activation_fn): ReLU()
+          (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (encoder_attn): M2M100SdpaAttention(
+            (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+            (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          )
+          (encoder_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (fc1): Linear(in_features=1024, out_features=8192, bias=True)
+          (fc2): Linear(in_features=8192, out_features=1024, bias=True)
+          (final_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+      (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+    )
+  )
+  (lm_head): Linear(in_features=1024, out_features=256206, bias=False)
+)
+2025-05-22 16:27:47 | INFO | utils.model_utils | Total num params: 1370.64M
+2025-05-22 16:27:47 | INFO | utils.model_utils | Trainable num params: 1370.64M
+2025-05-22 16:27:49 | INFO | nllb.trainer | Start Finetuning
+2025-05-22 16:27:49 | INFO | nllb.trainer | Evaluation Step 0...
+2025-05-22 16:27:55 | INFO | nllb.trainer | Eval after 0 updates: loss=4.9630 best_loss=4.9630 patience_steps_left=10
+2025-05-22 16:28:56 | INFO | nllb.trainer | Epoch 001 (321 steps) / update 50 total update 00050: train_loss=4.8700 last_lr=5.00E-06 peak_cuda_mem=31.99GB bsz=256.0 n_tokens=10699.5
+2025-05-22 16:29:56 | INFO | nllb.trainer | Epoch 001 (321 steps) / update 100 total update 00100: train_loss=4.5510 last_lr=1.00E-05 peak_cuda_mem=32.44GB bsz=256.0 n_tokens=10841.6
+2025-05-22 16:30:56 | INFO | nllb.trainer | Epoch 001 (321 steps) / update 150 total update 00150: train_loss=4.4147 last_lr=1.50E-05 peak_cuda_mem=32.06GB bsz=256.0 n_tokens=10730.2
+2025-05-22 16:31:56 | INFO | nllb.trainer | Epoch 001 (321 steps) / update 200 total update 00200: train_loss=4.3279 last_lr=2.00E-05 peak_cuda_mem=32.02GB bsz=256.0 n_tokens=10636.2
+2025-05-22 16:32:55 | INFO | nllb.trainer | Epoch 001 (321 steps) / update 250 total update 00250: train_loss=4.2823 last_lr=2.50E-05 peak_cuda_mem=31.93GB bsz=256.0 n_tokens=10762.2
+2025-05-22 16:32:55 | INFO | nllb.trainer | Evaluation Step 1...
+2025-05-22 16:33:01 | INFO | nllb.trainer | Eval after 250 updates: loss=4.2164 best_loss=4.2164 patience_steps_left=10
+2025-05-22 16:33:01 | INFO | nllb.trainer | Saving model
+/scratch/cmeng2/envs/iwslt25-os/lib/python3.10/site-packages/transformers/modeling_utils.py:2810: UserWarning: Moving the following attributes in the config to the generation config: {'max_length': 200}. You are seeing this warning because you've set generation parameters in the model config, as opposed to in the generation config.
+  warnings.warn(
+2025-05-22 16:34:09 | INFO | nllb.trainer | Epoch 001 (321 steps) / update 300 total update 00300: train_loss=4.2250 last_lr=3.00E-05 peak_cuda_mem=39.31GB bsz=256.0 n_tokens=10865.3
+2025-05-22 16:35:09 | INFO | nllb.trainer | Epoch 002 (321 steps) / update 29 total update 00350: train_loss=4.1916 last_lr=3.50E-05 peak_cuda_mem=32.82GB bsz=256.0 n_tokens=10760.6
+2025-05-22 16:36:09 | INFO | nllb.trainer | Epoch 002 (321 steps) / update 79 total update 00400: train_loss=4.1627 last_lr=4.00E-05 peak_cuda_mem=31.74GB bsz=256.0 n_tokens=10769.9
+2025-05-22 16:37:08 | INFO | nllb.trainer | Epoch 002 (321 steps) / update 129 total update 00450: train_loss=4.1415 last_lr=4.50E-05 peak_cuda_mem=32.48GB bsz=256.0 n_tokens=10707.2
+2025-05-22 16:38:08 | INFO | nllb.trainer | Epoch 002 (321 steps) / update 179 total update 00500: train_loss=4.1196 last_lr=5.00E-05 peak_cuda_mem=31.97GB bsz=256.0 n_tokens=10803.2
+2025-05-22 16:38:08 | INFO | nllb.trainer | Evaluation Step 2...
+2025-05-22 16:38:13 | INFO | nllb.trainer | Eval after 500 updates: loss=4.0923 best_loss=4.0923 patience_steps_left=10
+2025-05-22 16:38:13 | INFO | nllb.trainer | Saving model
+2025-05-22 16:39:22 | INFO | nllb.trainer | Epoch 002 (321 steps) / update 229 total update 00550: train_loss=4.1072 last_lr=5.50E-05 peak_cuda_mem=39.31GB bsz=256.0 n_tokens=10842.9
+2025-05-22 16:40:22 | INFO | nllb.trainer | Epoch 002 (321 steps) / update 279 total update 00600: train_loss=4.0802 last_lr=6.00E-05 peak_cuda_mem=32.08GB bsz=256.0 n_tokens=10693.1
+2025-05-22 16:41:22 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 8 total update 00650: train_loss=4.0626 last_lr=6.50E-05 peak_cuda_mem=39.32GB bsz=256.0 n_tokens=10913.1
+2025-05-22 16:42:22 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 58 total update 00700: train_loss=4.0204 last_lr=7.00E-05 peak_cuda_mem=32.79GB bsz=256.0 n_tokens=10937.6
+2025-05-22 16:43:22 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 108 total update 00750: train_loss=4.0062 last_lr=7.50E-05 peak_cuda_mem=32.18GB bsz=256.0 n_tokens=10684.8
+2025-05-22 16:43:22 | INFO | nllb.trainer | Evaluation Step 3...
+2025-05-22 16:43:27 | INFO | nllb.trainer | Eval after 750 updates: loss=4.0400 best_loss=4.0400 patience_steps_left=10
+2025-05-22 16:43:27 | INFO | nllb.trainer | Saving model
+2025-05-22 16:44:35 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 158 total update 00800: train_loss=4.0075 last_lr=8.00E-05 peak_cuda_mem=32.28GB bsz=256.0 n_tokens=10888.3
+2025-05-22 16:45:35 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 208 total update 00850: train_loss=3.9953 last_lr=8.50E-05 peak_cuda_mem=31.43GB bsz=256.0 n_tokens=10703.4
+2025-05-22 16:46:34 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 258 total update 00900: train_loss=3.9874 last_lr=9.00E-05 peak_cuda_mem=31.96GB bsz=256.0 n_tokens=10537.0
+2025-05-22 16:47:34 | INFO | nllb.trainer | Epoch 003 (321 steps) / update 308 total update 00950: train_loss=3.9828 last_lr=9.50E-05 peak_cuda_mem=32.10GB bsz=256.0 n_tokens=10847.4
+2025-05-22 16:48:34 | INFO | nllb.trainer | Epoch 004 (321 steps) / update 37 total update 01000: train_loss=3.9236 last_lr=1.00E-04 peak_cuda_mem=31.62GB bsz=256.0 n_tokens=10763.2
+2025-05-22 16:48:34 | INFO | nllb.trainer | Evaluation Step 4...
+2025-05-22 16:48:39 | INFO | nllb.trainer | Eval after 1000 updates: loss=4.0169 best_loss=4.0169 patience_steps_left=10
+2025-05-22 16:48:39 | INFO | nllb.trainer | Saving model
+2025-05-22 16:49:47 | INFO | nllb.trainer | Epoch 004 (321 steps) / update 87 total update 01050: train_loss=3.9067 last_lr=9.76E-05 peak_cuda_mem=31.75GB bsz=256.0 n_tokens=10799.4
+2025-05-22 16:50:47 | INFO | nllb.trainer | Epoch 004 (321 steps) / update 137 total update 01100: train_loss=3.9008 last_lr=9.53E-05 peak_cuda_mem=39.35GB bsz=256.0 n_tokens=10937.6
+2025-05-22 16:51:47 | INFO | nllb.trainer | Epoch 004 (321 steps) / update 187 total update 01150: train_loss=3.9052 last_lr=9.33E-05 peak_cuda_mem=31.87GB bsz=256.0 n_tokens=10592.0
+2025-05-22 16:52:47 | INFO | nllb.trainer | Epoch 004 (321 steps) / update 237 total update 01200: train_loss=3.9052 last_lr=9.13E-05 peak_cuda_mem=32.26GB bsz=256.0 n_tokens=10745.0
+2025-05-22 16:53:47 | INFO | nllb.trainer | Epoch 004 (321 steps) / update 287 total update 01250: train_loss=3.8876 last_lr=8.94E-05 peak_cuda_mem=32.84GB bsz=256.0 n_tokens=10885.8
+2025-05-22 16:53:47 | INFO | nllb.trainer | Evaluation Step 5...
+2025-05-22 16:53:52 | INFO | nllb.trainer | Eval after 1250 updates: loss=3.9899 best_loss=3.9899 patience_steps_left=10
+2025-05-22 16:53:52 | INFO | nllb.trainer | Saving model
+2025-05-22 16:55:01 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 16 total update 01300: train_loss=3.8687 last_lr=8.77E-05 peak_cuda_mem=31.73GB bsz=256.0 n_tokens=10773.6
+2025-05-22 16:56:00 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 66 total update 01350: train_loss=3.8063 last_lr=8.61E-05 peak_cuda_mem=32.05GB bsz=256.0 n_tokens=10762.9
+2025-05-22 16:57:00 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 116 total update 01400: train_loss=3.8108 last_lr=8.45E-05 peak_cuda_mem=32.16GB bsz=256.0 n_tokens=10901.8
+2025-05-22 16:58:00 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 166 total update 01450: train_loss=3.8058 last_lr=8.30E-05 peak_cuda_mem=32.78GB bsz=256.0 n_tokens=10659.2
+2025-05-22 16:59:00 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 216 total update 01500: train_loss=3.8162 last_lr=8.16E-05 peak_cuda_mem=39.27GB bsz=256.0 n_tokens=10913.3
+2025-05-22 16:59:00 | INFO | nllb.trainer | Evaluation Step 6...
+2025-05-22 16:59:05 | INFO | nllb.trainer | Eval after 1500 updates: loss=3.9908 best_loss=3.9899 patience_steps_left=9
+2025-05-22 17:00:05 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 266 total update 01550: train_loss=3.8069 last_lr=8.03E-05 peak_cuda_mem=32.04GB bsz=256.0 n_tokens=10764.8
+2025-05-22 17:01:05 | INFO | nllb.trainer | Epoch 005 (321 steps) / update 316 total update 01600: train_loss=3.8021 last_lr=7.91E-05 peak_cuda_mem=32.42GB bsz=256.0 n_tokens=10844.8
+2025-05-22 17:02:05 | INFO | nllb.trainer | Epoch 006 (321 steps) / update 45 total update 01650: train_loss=3.7424 last_lr=7.78E-05 peak_cuda_mem=32.21GB bsz=256.0 n_tokens=10639.2
+2025-05-22 17:03:05 | INFO | nllb.trainer | Epoch 006 (321 steps) / update 95 total update 01700: train_loss=3.7294 last_lr=7.67E-05 peak_cuda_mem=32.45GB bsz=256.0 n_tokens=10649.6
+2025-05-22 17:04:05 | INFO | nllb.trainer | Epoch 006 (321 steps) / update 145 total update 01750: train_loss=3.7378 last_lr=7.56E-05 peak_cuda_mem=31.90GB bsz=256.0 n_tokens=10848.6
+2025-05-22 17:04:05 | INFO | nllb.trainer | Evaluation Step 7...
+2025-05-22 17:04:10 | INFO | nllb.trainer | Eval after 1750 updates: loss=3.9988 best_loss=3.9899 patience_steps_left=8
+2025-05-22 17:05:10 | INFO | nllb.trainer | Epoch 006 (321 steps) / update 195 total update 01800: train_loss=3.7376 last_lr=7.45E-05 peak_cuda_mem=32.79GB bsz=256.0 n_tokens=10864.6
+2025-05-22 17:06:10 | INFO | nllb.trainer | Epoch 006 (321 steps) / update 245 total update 01850: train_loss=3.7357 last_lr=7.35E-05 peak_cuda_mem=39.32GB bsz=256.0 n_tokens=10865.9
+2025-05-22 17:07:10 | INFO | nllb.trainer | Epoch 006 (321 steps) / update 295 total update 01900: train_loss=3.7393 last_lr=7.25E-05 peak_cuda_mem=32.25GB bsz=256.0 n_tokens=10846.7
+2025-05-22 17:08:10 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 24 total update 01950: train_loss=3.7012 last_lr=7.16E-05 peak_cuda_mem=39.31GB bsz=256.0 n_tokens=10813.0
+2025-05-22 17:09:09 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 74 total update 02000: train_loss=3.6693 last_lr=7.07E-05 peak_cuda_mem=32.06GB bsz=256.0 n_tokens=10848.0
+2025-05-22 17:09:10 | INFO | nllb.trainer | Evaluation Step 8...
+2025-05-22 17:09:15 | INFO | nllb.trainer | Eval after 2000 updates: loss=4.0161 best_loss=3.9899 patience_steps_left=7
+2025-05-22 17:10:15 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 124 total update 02050: train_loss=3.6703 last_lr=6.98E-05 peak_cuda_mem=32.08GB bsz=256.0 n_tokens=10870.4
+2025-05-22 17:11:15 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 174 total update 02100: train_loss=3.6748 last_lr=6.90E-05 peak_cuda_mem=32.43GB bsz=256.0 n_tokens=10806.4
+2025-05-22 17:12:14 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 224 total update 02150: train_loss=3.6766 last_lr=6.82E-05 peak_cuda_mem=32.18GB bsz=256.0 n_tokens=10745.6
+2025-05-22 17:13:14 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 274 total update 02200: train_loss=3.6744 last_lr=6.74E-05 peak_cuda_mem=31.72GB bsz=256.0 n_tokens=10761.0
+2025-05-22 17:14:13 | INFO | nllb.trainer | Epoch 007 (321 steps) / update 3 total update 02250: train_loss=3.6793 last_lr=6.67E-05 peak_cuda_mem=31.93GB bsz=256.0 n_tokens=10643.8
+2025-05-22 17:14:14 | INFO | nllb.trainer | Evaluation Step 9...
+2025-05-22 17:14:19 | INFO | nllb.trainer | Eval after 2250 updates: loss=4.0080 best_loss=3.9899 patience_steps_left=6
+2025-05-22 17:15:19 | INFO | nllb.trainer | Epoch 008 (321 steps) / update 53 total update 02300: train_loss=3.6146 last_lr=6.59E-05 peak_cuda_mem=31.91GB bsz=256.0 n_tokens=10799.9
+2025-05-22 17:16:18 | INFO | nllb.trainer | Epoch 008 (321 steps) / update 103 total update 02350: train_loss=3.6135 last_lr=6.52E-05 peak_cuda_mem=32.08GB bsz=256.0 n_tokens=10841.0
+2025-05-22 17:17:18 | INFO | nllb.trainer | Epoch 008 (321 steps) / update 153 total update 02400: train_loss=3.6184 last_lr=6.45E-05 peak_cuda_mem=32.82GB bsz=256.0 n_tokens=10708.5
+2025-05-22 17:18:18 | INFO | nllb.trainer | Epoch 008 (321 steps) / update 203 total update 02450: train_loss=3.6205 last_lr=6.39E-05 peak_cuda_mem=32.28GB bsz=256.0 n_tokens=10842.2
+2025-05-22 17:19:18 | INFO | nllb.trainer | Epoch 008 (321 steps) / update 253 total update 02500: train_loss=3.6262 last_lr=6.32E-05 peak_cuda_mem=32.43GB bsz=256.0 n_tokens=10807.0
+2025-05-22 17:19:18 | INFO | nllb.trainer | Evaluation Step 10...
+2025-05-22 17:19:23 | INFO | nllb.trainer | Eval after 2500 updates: loss=4.0273 best_loss=3.9899 patience_steps_left=5
+2025-05-22 17:20:23 | INFO | nllb.trainer | Epoch 008 (321 steps) / update 303 total update 02550: train_loss=3.6252 last_lr=6.26E-05 peak_cuda_mem=39.31GB bsz=256.0 n_tokens=10867.2
+2025-05-22 17:21:22 | INFO | nllb.trainer | Epoch 009 (321 steps) / update 32 total update 02600: train_loss=3.5897 last_lr=6.20E-05 peak_cuda_mem=31.71GB bsz=256.0 n_tokens=10677.7
+2025-05-22 17:22:23 | INFO | nllb.trainer | Epoch 009 (321 steps) / update 82 total update 02650: train_loss=3.5663 last_lr=6.14E-05 peak_cuda_mem=39.31GB bsz=256.0 n_tokens=10914.6
+2025-05-22 17:23:23 | INFO | nllb.trainer | Epoch 009 (321 steps) / update 132 total update 02700: train_loss=3.5717 last_lr=6.09E-05 peak_cuda_mem=31.41GB bsz=256.0 n_tokens=10679.7
+2025-05-22 17:24:23 | INFO | nllb.trainer | Epoch 009 (321 steps) / update 182 total update 02750: train_loss=3.5738 last_lr=6.03E-05 peak_cuda_mem=32.07GB bsz=256.0 n_tokens=10967.0
+2025-05-22 17:24:23 | INFO | nllb.trainer | Evaluation Step 11...
+2025-05-22 17:24:28 | INFO | nllb.trainer | Eval after 2750 updates: loss=4.0476 best_loss=3.9899 patience_steps_left=4
+2025-05-22 17:25:27 | INFO | nllb.trainer | Epoch 009 (321 steps) / update 232 total update 02800: train_loss=3.5738 last_lr=5.98E-05 peak_cuda_mem=31.97GB bsz=256.0 n_tokens=10645.1
+2025-05-22 17:26:27 | INFO | nllb.trainer | Epoch 009 (321 steps) / update 282 total update 02850: train_loss=3.5746 last_lr=5.92E-05 peak_cuda_mem=31.90GB bsz=256.0 n_tokens=10681.6
+2025-05-22 17:27:27 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 11 total update 02900: train_loss=3.5734 last_lr=5.87E-05 peak_cuda_mem=32.48GB bsz=256.0 n_tokens=10908.5
+2025-05-22 17:28:27 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 61 total update 02950: train_loss=3.5270 last_lr=5.82E-05 peak_cuda_mem=31.93GB bsz=256.0 n_tokens=10853.1
+2025-05-22 17:29:27 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 111 total update 03000: train_loss=3.5262 last_lr=5.77E-05 peak_cuda_mem=31.43GB bsz=256.0 n_tokens=10753.3
+2025-05-22 17:29:27 | INFO | nllb.trainer | Evaluation Step 12...
+2025-05-22 17:29:32 | INFO | nllb.trainer | Eval after 3000 updates: loss=4.0706 best_loss=3.9899 patience_steps_left=3
+2025-05-22 17:30:32 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 161 total update 03050: train_loss=3.5291 last_lr=5.73E-05 peak_cuda_mem=39.29GB bsz=256.0 n_tokens=10903.0
+2025-05-22 17:31:32 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 211 total update 03100: train_loss=3.5324 last_lr=5.68E-05 peak_cuda_mem=32.41GB bsz=256.0 n_tokens=10717.4
+2025-05-22 17:32:31 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 261 total update 03150: train_loss=3.5322 last_lr=5.63E-05 peak_cuda_mem=31.96GB bsz=256.0 n_tokens=10620.8
+2025-05-22 17:33:31 | INFO | nllb.trainer | Epoch 010 (321 steps) / update 311 total update 03200: train_loss=3.5336 last_lr=5.59E-05 peak_cuda_mem=31.82GB bsz=256.0 n_tokens=10634.2
+2025-05-22 17:33:50 | INFO | nllb.trainer | Evaluation Step 12...
+2025-05-22 17:33:56 | INFO | nllb.trainer | Eval after 3216 updates: loss=4.0731 best_loss=3.9899 patience_steps_left=2 

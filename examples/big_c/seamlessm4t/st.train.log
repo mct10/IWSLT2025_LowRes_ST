@@ -1,0 +1,316 @@
++ python -m seamlessm4t.finetune --src_lang bem --tgt_lang eng --train_dataset /scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/st.tc.punc.train.tsv --eval_dataset /scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/st.tc.punc.valid.tsv --model_name facebook/seamless-m4t-v2-large --save_model_to /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250 --save_processor_path /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250_proc --mode SPEECH_TO_TEXT --eval_mode SPEECH_TO_TEXT --learning_rate 1e-4 --warmup_steps 1000 --max_epochs 10 --batch_size 120 --update_freq 30 --max_speech_dur 30.0 --eval_steps 250 --patience 10 --log_steps 50 --untie_lm_head --prefix_skip_len 1 --dropout_fix
+2025-05-22 16:21:06 | INFO | __main__ | input args: Namespace(src_lang='bem', tgt_lang='eng', train_dataset=PosixPath('/scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/st.tc.punc.train.tsv'), eval_dataset=PosixPath('/scratch/cmeng2/datasets/iwslt2025-lres-st-os-input/bem-eng/bigc/st.tc.punc.valid.tsv'), model_name='facebook/seamless-m4t-v2-large', load_from_mt_pretrained=None, load_from_asr_pretrained=None, save_model_to=PosixPath('/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250'), finetune_text_encoder=False, processor_path=None, save_processor_path='/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250_proc', learning_rate=0.0001, alpha=1, beta=1, gamma=1, kd_loss_type=<KdLossType.KLD: 'KLD'>, detach_teacher=False, warmup_steps=1000, batch_size=120, update_freq=30, max_text_tokens=128, max_speech_dur=30.0, device='cuda', mode=<FinetuneMode.SPEECH_TO_TEXT: 'SPEECH_TO_TEXT'>, eval_mode=<FinetuneMode.SPEECH_TO_TEXT: 'SPEECH_TO_TEXT'>, patience=10, max_epochs=10, eval_steps=250, log_steps=50, seed=42, untie_lm_head=True, prefix_skip_len=1, dropout_fix=True)
+2025-05-22 16:21:06 | INFO | __main__ | Set seed to 42
+2025-05-22 16:21:06 | INFO | __main__ | Will use real batch size 4 with gradient accumulation 30
+2025-05-22 16:21:06 | INFO | __main__ | The effective batch size is 120
+2025-05-22 16:21:06 | INFO | __main__ | Finetune Params: FinetuneParams(model_name='facebook/seamless-m4t-v2-large', save_model_path=PosixPath('/scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250'), model_ver=<ModelVer.VER_2: 'VER_2'>, finetune_mode=<FinetuneMode.SPEECH_TO_TEXT: 'SPEECH_TO_TEXT'>, eval_mode=<FinetuneMode.SPEECH_TO_TEXT: 'SPEECH_TO_TEXT'>, finetune_text_encoder=False, train_batch_size=4, eval_batch_size=4, learning_rate=0.0001, alpha=1, beta=1, gamma=1, kd_loss_type=<KdLossType.KLD: 'KLD'>, detach_teacher=False, label_smoothing=0.2, prefix_skip_len=1, warmup_steps=1000, log_steps=50, eval_steps=250, update_freq=30, patience=10, max_epochs=10, float_dtype=torch.float16, device=device(type='cuda'))
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.41it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.36it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.37it/s]
+2025-05-22 16:21:10 | INFO | __main__ | Will untie lm head
+2025-05-22 16:21:11 | INFO | seamlessm4t.model_utils | Will update decoder's ffn_dropout
+2025-05-22 16:21:11 | INFO | seamlessm4t.model_utils | Will update adapter's attention score & ffn dropout
+2025-05-22 16:21:11 | INFO | utils.model_utils | Model:
+SeamlessM4Tv2Model(
+  (shared): Embedding(256102, 1024, padding_idx=0)
+  (text_encoder): None
+  (speech_encoder): SeamlessM4Tv2SpeechEncoder(
+    (feature_projection): SeamlessM4Tv2ConformerFeatureProjection(
+      (layer_norm): LayerNorm((160,), eps=1e-05, elementwise_affine=True)
+      (projection): Linear(in_features=160, out_features=1024, bias=True)
+      (dropout): Dropout(p=0.0, inplace=False)
+    )
+    (encoder): SeamlessM4Tv2ConformerEncoder(
+      (dropout): Dropout(p=0.0, inplace=False)
+      (layers): ModuleList(
+        (0-23): 24 x SeamlessM4Tv2ConformerEncoderLayer(
+          (ffn1_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (ffn1): SeamlessM4Tv2ConformerFeedForward(
+            (intermediate_dropout): Dropout(p=0.0, inplace=False)
+            (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+            (intermediate_act_fn): SiLU()
+            (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+            (output_dropout): Dropout(p=0.0, inplace=False)
+          )
+          (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (self_attn_dropout): Dropout(p=0.0, inplace=False)
+          (self_attn): SeamlessM4Tv2ConformerSelfAttention(
+            (linear_q): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_k): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_v): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_out): Linear(in_features=1024, out_features=1024, bias=True)
+            (dropout): Dropout(p=0.0, inplace=False)
+            (distance_embedding): Embedding(73, 64)
+          )
+          (conv_module): SeamlessM4Tv2ConformerConvolutionModule(
+            (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (pointwise_conv1): Conv1d(1024, 2048, kernel_size=(1,), stride=(1,), bias=False)
+            (glu): GLU(dim=1)
+            (depthwise_conv): Conv1d(1024, 1024, kernel_size=(31,), stride=(1,), groups=1024, bias=False)
+            (depthwise_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (activation): SiLU()
+            (pointwise_conv2): Conv1d(1024, 1024, kernel_size=(1,), stride=(1,), bias=False)
+            (dropout): Dropout(p=0.0, inplace=False)
+          )
+          (ffn2_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (ffn2): SeamlessM4Tv2ConformerFeedForward(
+            (intermediate_dropout): Dropout(p=0.0, inplace=False)
+            (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+            (intermediate_act_fn): SiLU()
+            (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+            (output_dropout): Dropout(p=0.0, inplace=False)
+          )
+          (final_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+      (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+    )
+    (intermediate_ffn): SeamlessM4Tv2ConformerFeedForward(
+      (intermediate_dropout): Dropout(p=0.0, inplace=False)
+      (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+      (intermediate_act_fn): ReLU()
+      (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+      (output_dropout): Dropout(p=0.0, inplace=False)
+    )
+    (adapter): SeamlessM4Tv2ConformerAdapter(
+      (layers): ModuleList(
+        (0): SeamlessM4Tv2ConformerAdapterLayer(
+          (residual_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (residual_conv): Conv1d(1024, 2048, kernel_size=(8,), stride=(8,), padding=(4,))
+          (activation): GLU(dim=1)
+          (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (self_attn_conv): Conv1d(1024, 2048, kernel_size=(8,), stride=(8,), padding=(4,))
+          (self_attn): SeamlessM4Tv2ConformerSelfAttention(
+            (linear_q): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_k): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_v): Linear(in_features=1024, out_features=1024, bias=True)
+            (linear_out): Linear(in_features=1024, out_features=1024, bias=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+          (self_attn_dropout): Dropout(p=0.1, inplace=False)
+          (ffn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+          (ffn): SeamlessM4Tv2ConformerFeedForward(
+            (intermediate_dropout): Dropout(p=0.0, inplace=False)
+            (intermediate_dense): Linear(in_features=1024, out_features=4096, bias=True)
+            (intermediate_act_fn): ReLU()
+            (output_dense): Linear(in_features=4096, out_features=1024, bias=True)
+            (output_dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+    (inner_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  )
+  (text_decoder): SeamlessM4Tv2Decoder(
+    (embed_tokens): SeamlessM4Tv2ScaledWordEmbedding(256102, 1024, padding_idx=0)
+    (embed_positions): SeamlessM4Tv2SinusoidalPositionalEmbedding()
+    (layers): ModuleList(
+      (0-23): 24 x SeamlessM4Tv2DecoderLayer(
+        (self_attn): SeamlessM4Tv2Attention(
+          (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+        )
+        (activation_fn): ReLU()
+        (attn_dropout): Dropout(p=0.1, inplace=False)
+        (self_attn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (cross_attention): SeamlessM4Tv2Attention(
+          (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+          (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+        )
+        (cross_attention_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (ffn): SeamlessM4Tv2FeedForwardNetwork(
+          (fc1): Linear(in_features=1024, out_features=8192, bias=True)
+          (fc2): Linear(in_features=8192, out_features=1024, bias=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (act): ReLU()
+        )
+        (ffn_layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (layer_norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  )
+  (lm_head): Linear(in_features=1024, out_features=256102, bias=False)
+  (t2u_model): None
+  (vocoder): None
+)
+2025-05-22 16:21:11 | INFO | utils.model_utils | Total num params: 1764.09M
+2025-05-22 16:21:11 | INFO | utils.model_utils | Trainable num params: 1764.09M
+2025-05-22 16:21:11 | INFO | __main__ | Load processor from facebook/seamless-m4t-v2-large
+2025-05-22 16:21:15 | INFO | __main__ | Adding __bem__ to tokenizer
+2025-05-22 16:21:15 | INFO | __main__ | Adding bem to model
+2025-05-22 16:21:15 | INFO | __main__ | Save process to /scratch/cmeng2/experiments/iwslt2025-lres-st-os-seamless/bem-eng/bigc/ckpts/v2_ST_tc-punc_lr1e-4_warmup1000_epoch10_bsz120_freq30_max30s_p10x250_proc
+2025-05-22 16:21:16 | INFO | seamlessm4t.dataloader | Init data mode=FinetuneMode.SPEECH_TO_TEXT
+2025-05-22 16:21:16 | INFO | seamlessm4t.dataloader | Batch config: BatchingConfig(max_text_tokens=128, max_speech_frames=480000, batch_size=4, num_workers=2, float_dtype=torch.float16)
+2025-05-22 16:21:17 | INFO | seamlessm4t.dataloader | Init data mode=FinetuneMode.SPEECH_TO_TEXT
+2025-05-22 16:21:17 | INFO | seamlessm4t.dataloader | Batch config: BatchingConfig(max_text_tokens=128, max_speech_frames=480000, batch_size=4, num_workers=1, float_dtype=torch.float16)
+2025-05-22 16:21:18 | INFO | seamlessm4t.trainer | CalcLoss: 256102 classes neg=7.809388446790732e-07 | pos=0.8000007809388447 Kd Loss Type: KdLossType.KLD Detach Teacher: False prefix skip len: 1
+2025-05-22 16:21:19 | INFO | seamlessm4t.trainer | Start Finetuning
+2025-05-22 16:21:19 | INFO | seamlessm4t.trainer | Evaluation Step 0...
+2025-05-22 16:22:34 | INFO | seamlessm4t.trainer | Eval after 0 updates: tot_loss=5.6424 best_loss=5.6424 patience_steps_left=10
+2025-05-22 16:30:51 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 50 total update 00050: train_loss=7.6758 last_lr=5.00E-06 peak_cuda_mem=63.44GB bsz=120.0 n_tokens=10199603.2 
+2025-05-22 16:39:06 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 100 total update 00100: train_loss=5.5309 last_lr=1.00E-05 peak_cuda_mem=59.91GB bsz=120.0 n_tokens=10094425.6 
+2025-05-22 16:47:22 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 150 total update 00150: train_loss=5.1123 last_lr=1.50E-05 peak_cuda_mem=57.88GB bsz=120.0 n_tokens=10092736.0 
+2025-05-22 16:55:40 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 200 total update 00200: train_loss=4.8497 last_lr=2.00E-05 peak_cuda_mem=60.15GB bsz=120.0 n_tokens=10141747.2 
+2025-05-22 17:03:57 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 250 total update 00250: train_loss=4.6494 last_lr=2.50E-05 peak_cuda_mem=61.04GB bsz=120.0 n_tokens=10165772.8 
+2025-05-22 17:03:58 | INFO | seamlessm4t.trainer | Evaluation Step 1...
+2025-05-22 17:05:17 | INFO | seamlessm4t.trainer | Eval after 250 updates: tot_loss=4.4528 best_loss=4.4528 patience_steps_left=10 
+2025-05-22 17:05:17 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 17:13:31 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 300 total update 00300: train_loss=4.5102 last_lr=3.00E-05 peak_cuda_mem=56.74GB bsz=120.0 n_tokens=9970918.4 
+2025-05-22 17:21:48 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 350 total update 00350: train_loss=4.4387 last_lr=3.50E-05 peak_cuda_mem=64.09GB bsz=120.0 n_tokens=10149043.2 
+2025-05-22 17:30:08 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 400 total update 00400: train_loss=4.3759 last_lr=4.00E-05 peak_cuda_mem=50.37GB bsz=120.0 n_tokens=10164224.0 
+2025-05-22 17:38:26 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 450 total update 00450: train_loss=4.3404 last_lr=4.50E-05 peak_cuda_mem=67.54GB bsz=120.0 n_tokens=10059724.8 
+2025-05-22 17:46:46 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 500 total update 00500: train_loss=4.3137 last_lr=5.00E-05 peak_cuda_mem=59.19GB bsz=120.0 n_tokens=10211353.6 
+2025-05-22 17:46:46 | INFO | seamlessm4t.trainer | Evaluation Step 2...
+2025-05-22 17:48:06 | INFO | seamlessm4t.trainer | Eval after 500 updates: tot_loss=4.2002 best_loss=4.2002 patience_steps_left=10 
+2025-05-22 17:48:06 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 17:56:38 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 550 total update 00550: train_loss=4.2863 last_lr=5.50E-05 peak_cuda_mem=55.22GB bsz=120.0 n_tokens=10219520.0 
+2025-05-22 18:04:56 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 600 total update 00600: train_loss=4.2735 last_lr=6.00E-05 peak_cuda_mem=67.70GB bsz=120.0 n_tokens=10080768.0 
+2025-05-22 18:13:17 | INFO | seamlessm4t.trainer | Epoch 001 (686 steps) / update 650 total update 00650: train_loss=4.2370 last_lr=6.50E-05 peak_cuda_mem=67.72GB bsz=120.0 n_tokens=10119257.6 
+2025-05-22 18:21:42 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 14 total update 00700: train_loss=4.2195 last_lr=7.00E-05 peak_cuda_mem=48.76GB bsz=120.0 n_tokens=10221494.4 
+2025-05-22 18:30:05 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 64 total update 00750: train_loss=4.1775 last_lr=7.50E-05 peak_cuda_mem=63.63GB bsz=120.0 n_tokens=10179340.8 
+2025-05-22 18:30:05 | INFO | seamlessm4t.trainer | Evaluation Step 3...
+2025-05-22 18:31:24 | INFO | seamlessm4t.trainer | Eval after 750 updates: tot_loss=4.1281 best_loss=4.1281 patience_steps_left=10 
+2025-05-22 18:31:24 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 18:40:02 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 114 total update 00800: train_loss=4.1742 last_lr=8.00E-05 peak_cuda_mem=62.54GB bsz=120.0 n_tokens=10133222.4 
+2025-05-22 18:48:29 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 164 total update 00850: train_loss=4.1858 last_lr=8.50E-05 peak_cuda_mem=68.95GB bsz=120.0 n_tokens=10185228.8 
+2025-05-22 18:56:40 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 214 total update 00900: train_loss=4.1554 last_lr=9.00E-05 peak_cuda_mem=55.94GB bsz=120.0 n_tokens=9994944.0 
+2025-05-22 19:04:51 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 264 total update 00950: train_loss=4.1505 last_lr=9.50E-05 peak_cuda_mem=59.27GB bsz=120.0 n_tokens=10157542.4 
+2025-05-22 19:13:02 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 314 total update 01000: train_loss=4.1434 last_lr=1.00E-04 peak_cuda_mem=69.28GB bsz=120.0 n_tokens=10213312.0 
+2025-05-22 19:13:02 | INFO | seamlessm4t.trainer | Evaluation Step 4...
+2025-05-22 19:14:21 | INFO | seamlessm4t.trainer | Eval after 1000 updates: tot_loss=4.0968 best_loss=4.0968 patience_steps_left=10 
+2025-05-22 19:14:21 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 19:23:01 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 364 total update 01050: train_loss=4.1447 last_lr=9.76E-05 peak_cuda_mem=67.99GB bsz=120.0 n_tokens=10191603.2 
+2025-05-22 19:31:20 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 414 total update 01100: train_loss=4.1292 last_lr=9.53E-05 peak_cuda_mem=55.51GB bsz=120.0 n_tokens=10044620.8 
+2025-05-22 19:39:38 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 464 total update 01150: train_loss=4.1234 last_lr=9.33E-05 peak_cuda_mem=54.79GB bsz=120.0 n_tokens=10030528.0 
+2025-05-22 19:47:54 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 514 total update 01200: train_loss=4.1064 last_lr=9.13E-05 peak_cuda_mem=50.63GB bsz=120.0 n_tokens=10143872.0 
+2025-05-22 19:56:18 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 564 total update 01250: train_loss=4.1139 last_lr=8.94E-05 peak_cuda_mem=60.18GB bsz=120.0 n_tokens=10174374.4 
+2025-05-22 19:56:18 | INFO | seamlessm4t.trainer | Evaluation Step 5...
+2025-05-22 19:57:36 | INFO | seamlessm4t.trainer | Eval after 1250 updates: tot_loss=4.0626 best_loss=4.0626 patience_steps_left=10 
+2025-05-22 19:57:36 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 20:06:06 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 614 total update 01300: train_loss=4.1139 last_lr=8.77E-05 peak_cuda_mem=52.20GB bsz=120.0 n_tokens=10111744.0 
+2025-05-22 20:14:24 | INFO | seamlessm4t.trainer | Epoch 002 (686 steps) / update 664 total update 01350: train_loss=4.1060 last_lr=8.61E-05 peak_cuda_mem=58.60GB bsz=120.0 n_tokens=10139379.2 
+2025-05-22 20:22:42 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 28 total update 01400: train_loss=4.0420 last_lr=8.45E-05 peak_cuda_mem=57.33GB bsz=120.0 n_tokens=10150563.2 
+2025-05-22 20:30:59 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 78 total update 01450: train_loss=4.0067 last_lr=8.30E-05 peak_cuda_mem=69.32GB bsz=120.0 n_tokens=10081574.4 
+2025-05-22 20:39:15 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 128 total update 01500: train_loss=4.0100 last_lr=8.16E-05 peak_cuda_mem=59.27GB bsz=120.0 n_tokens=10083942.4 
+2025-05-22 20:39:15 | INFO | seamlessm4t.trainer | Evaluation Step 6...
+2025-05-22 20:40:34 | INFO | seamlessm4t.trainer | Eval after 1500 updates: tot_loss=4.0388 best_loss=4.0388 patience_steps_left=10 
+2025-05-22 20:40:34 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 20:49:07 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 178 total update 01550: train_loss=4.0041 last_lr=8.03E-05 peak_cuda_mem=49.25GB bsz=120.0 n_tokens=10146368.0 
+2025-05-22 20:57:21 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 228 total update 01600: train_loss=3.9887 last_lr=7.91E-05 peak_cuda_mem=64.15GB bsz=120.0 n_tokens=10052172.8 
+2025-05-22 21:05:37 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 278 total update 01650: train_loss=4.0046 last_lr=7.78E-05 peak_cuda_mem=54.33GB bsz=120.0 n_tokens=9977011.2 
+2025-05-22 21:14:04 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 328 total update 01700: train_loss=3.9927 last_lr=7.67E-05 peak_cuda_mem=59.39GB bsz=120.0 n_tokens=10189235.2 
+2025-05-22 21:22:27 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 378 total update 01750: train_loss=4.0013 last_lr=7.56E-05 peak_cuda_mem=55.80GB bsz=120.0 n_tokens=10233088.0 
+2025-05-22 21:22:27 | INFO | seamlessm4t.trainer | Evaluation Step 7...
+2025-05-22 21:23:45 | INFO | seamlessm4t.trainer | Eval after 1750 updates: tot_loss=4.0247 best_loss=4.0247 patience_steps_left=10 
+2025-05-22 21:23:45 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 21:32:24 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 428 total update 01800: train_loss=4.0089 last_lr=7.45E-05 peak_cuda_mem=69.32GB bsz=120.0 n_tokens=10194854.4 
+2025-05-22 21:40:40 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 478 total update 01850: train_loss=3.9851 last_lr=7.35E-05 peak_cuda_mem=61.01GB bsz=120.0 n_tokens=9986803.2 
+2025-05-22 21:49:01 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 528 total update 01900: train_loss=3.9887 last_lr=7.25E-05 peak_cuda_mem=56.27GB bsz=120.0 n_tokens=10186560.0 
+2025-05-22 21:57:21 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 578 total update 01950: train_loss=3.9774 last_lr=7.16E-05 peak_cuda_mem=68.95GB bsz=120.0 n_tokens=10116672.0 
+2025-05-22 22:05:47 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 628 total update 02000: train_loss=3.9912 last_lr=7.07E-05 peak_cuda_mem=60.72GB bsz=120.0 n_tokens=10158067.2 
+2025-05-22 22:05:47 | INFO | seamlessm4t.trainer | Evaluation Step 8...
+2025-05-22 22:07:05 | INFO | seamlessm4t.trainer | Eval after 2000 updates: tot_loss=4.0050 best_loss=4.0050 patience_steps_left=10 
+2025-05-22 22:07:05 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 22:15:46 | INFO | seamlessm4t.trainer | Epoch 003 (686 steps) / update 678 total update 02050: train_loss=3.9810 last_lr=6.98E-05 peak_cuda_mem=60.16GB bsz=120.0 n_tokens=10305830.4 
+2025-05-22 22:24:04 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 42 total update 02100: train_loss=3.9001 last_lr=6.90E-05 peak_cuda_mem=51.41GB bsz=120.0 n_tokens=10090643.2 
+2025-05-22 22:32:25 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 92 total update 02150: train_loss=3.8968 last_lr=6.82E-05 peak_cuda_mem=66.96GB bsz=120.0 n_tokens=10104448.0 
+2025-05-22 22:40:45 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 142 total update 02200: train_loss=3.8994 last_lr=6.74E-05 peak_cuda_mem=50.09GB bsz=120.0 n_tokens=10132364.8 
+2025-05-22 22:49:06 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 192 total update 02250: train_loss=3.9003 last_lr=6.67E-05 peak_cuda_mem=68.95GB bsz=120.0 n_tokens=10138252.8 
+2025-05-22 22:49:06 | INFO | seamlessm4t.trainer | Evaluation Step 9...
+2025-05-22 22:50:29 | INFO | seamlessm4t.trainer | Eval after 2250 updates: tot_loss=4.0001 best_loss=4.0001 patience_steps_left=10 
+2025-05-22 22:50:29 | INFO | seamlessm4t.trainer | Saving model
+2025-05-22 22:59:03 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 242 total update 02300: train_loss=3.9016 last_lr=6.59E-05 peak_cuda_mem=67.35GB bsz=120.0 n_tokens=10125862.4 
+2025-05-22 23:07:25 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 292 total update 02350: train_loss=3.8973 last_lr=6.52E-05 peak_cuda_mem=61.00GB bsz=120.0 n_tokens=10124480.0 
+2025-05-22 23:15:46 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 342 total update 02400: train_loss=3.8994 last_lr=6.45E-05 peak_cuda_mem=52.30GB bsz=120.0 n_tokens=10097638.4 
+2025-05-22 23:24:06 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 392 total update 02450: train_loss=3.8936 last_lr=6.39E-05 peak_cuda_mem=56.55GB bsz=120.0 n_tokens=10139289.6 
+2025-05-22 23:32:25 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 442 total update 02500: train_loss=3.9008 last_lr=6.32E-05 peak_cuda_mem=60.58GB bsz=120.0 n_tokens=10219481.6 
+2025-05-22 23:32:25 | INFO | seamlessm4t.trainer | Evaluation Step 10...
+2025-05-22 23:33:42 | INFO | seamlessm4t.trainer | Eval after 2500 updates: tot_loss=4.0016 best_loss=4.0001 patience_steps_left=9 
+2025-05-22 23:42:09 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 492 total update 02550: train_loss=3.8941 last_lr=6.26E-05 peak_cuda_mem=57.12GB bsz=120.0 n_tokens=10148569.6
+2025-05-22 23:50:28 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 542 total update 02600: train_loss=3.8974 last_lr=6.20E-05 peak_cuda_mem=50.66GB bsz=120.0 n_tokens=10038899.2 
+2025-05-22 23:58:46 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 592 total update 02650: train_loss=3.8835 last_lr=6.14E-05 peak_cuda_mem=62.54GB bsz=120.0 n_tokens=10066598.4 
+2025-05-23 00:07:09 | INFO | seamlessm4t.trainer | Epoch 004 (686 steps) / update 642 total update 02700: train_loss=3.8979 last_lr=6.09E-05 peak_cuda_mem=59.90GB bsz=120.0 n_tokens=10138252.8 
+2025-05-23 00:15:31 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 6 total update 02750: train_loss=3.8742 last_lr=6.03E-05 peak_cuda_mem=55.94GB bsz=120.0 n_tokens=10235971.2 
+2025-05-23 00:15:31 | INFO | seamlessm4t.trainer | Evaluation Step 11...
+2025-05-23 00:16:50 | INFO | seamlessm4t.trainer | Eval after 2750 updates: tot_loss=3.9858 best_loss=3.9858 patience_steps_left=10 
+2025-05-23 00:16:50 | INFO | seamlessm4t.trainer | Saving model
+2025-05-23 00:25:25 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 56 total update 02800: train_loss=3.8046 last_lr=5.98E-05 peak_cuda_mem=56.56GB bsz=120.0 n_tokens=10132096.0 
+2025-05-23 00:33:46 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 106 total update 02850: train_loss=3.8156 last_lr=5.92E-05 peak_cuda_mem=50.27GB bsz=120.0 n_tokens=10147852.8 
+2025-05-23 00:42:08 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 156 total update 02900: train_loss=3.8103 last_lr=5.87E-05 peak_cuda_mem=60.72GB bsz=120.0 n_tokens=10177587.2 
+2025-05-23 00:50:31 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 206 total update 02950: train_loss=3.8163 last_lr=5.82E-05 peak_cuda_mem=67.28GB bsz=120.0 n_tokens=10074176.0 
+2025-05-23 00:58:53 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 256 total update 03000: train_loss=3.8283 last_lr=5.77E-05 peak_cuda_mem=58.31GB bsz=120.0 n_tokens=10059136.0 
+2025-05-23 00:58:53 | INFO | seamlessm4t.trainer | Evaluation Step 12...
+2025-05-23 01:00:13 | INFO | seamlessm4t.trainer | Eval after 3000 updates: tot_loss=3.9913 best_loss=3.9858 patience_steps_left=9 
+2025-05-23 01:08:38 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 306 total update 03050: train_loss=3.8156 last_lr=5.73E-05 peak_cuda_mem=67.42GB bsz=120.0 n_tokens=10118579.2
+2025-05-23 01:17:00 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 356 total update 03100: train_loss=3.8171 last_lr=5.68E-05 peak_cuda_mem=54.12GB bsz=120.0 n_tokens=10084800.0 
+2025-05-23 01:25:27 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 406 total update 03150: train_loss=3.8217 last_lr=5.63E-05 peak_cuda_mem=53.16GB bsz=120.0 n_tokens=10142668.8 
+2025-05-23 01:33:54 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 456 total update 03200: train_loss=3.8309 last_lr=5.59E-05 peak_cuda_mem=55.74GB bsz=120.0 n_tokens=10177459.2 
+2025-05-23 01:42:21 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 506 total update 03250: train_loss=3.8263 last_lr=5.55E-05 peak_cuda_mem=69.52GB bsz=120.0 n_tokens=10297766.4 
+2025-05-23 01:42:21 | INFO | seamlessm4t.trainer | Evaluation Step 13...
+2025-05-23 01:43:40 | INFO | seamlessm4t.trainer | Eval after 3250 updates: tot_loss=3.9887 best_loss=3.9858 patience_steps_left=8 
+2025-05-23 01:52:01 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 556 total update 03300: train_loss=3.8173 last_lr=5.50E-05 peak_cuda_mem=57.27GB bsz=120.0 n_tokens=10059276.8
+2025-05-23 02:00:23 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 606 total update 03350: train_loss=3.8121 last_lr=5.46E-05 peak_cuda_mem=59.30GB bsz=120.0 n_tokens=10161318.4 
+2025-05-23 02:08:40 | INFO | seamlessm4t.trainer | Epoch 005 (686 steps) / update 656 total update 03400: train_loss=3.8111 last_lr=5.42E-05 peak_cuda_mem=53.56GB bsz=120.0 n_tokens=10057446.4 
+2025-05-23 02:16:58 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 20 total update 03450: train_loss=3.7860 last_lr=5.38E-05 peak_cuda_mem=59.02GB bsz=120.0 n_tokens=10038438.4 
+2025-05-23 02:25:22 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 70 total update 03500: train_loss=3.7399 last_lr=5.35E-05 peak_cuda_mem=68.91GB bsz=120.0 n_tokens=10149286.4 
+2025-05-23 02:25:22 | INFO | seamlessm4t.trainer | Evaluation Step 14...
+2025-05-23 02:26:39 | INFO | seamlessm4t.trainer | Eval after 3500 updates: tot_loss=4.0008 best_loss=3.9858 patience_steps_left=7 
+2025-05-23 02:35:05 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 120 total update 03550: train_loss=3.7486 last_lr=5.31E-05 peak_cuda_mem=56.42GB bsz=120.0 n_tokens=10144102.4
+2025-05-23 02:43:25 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 170 total update 03600: train_loss=3.7562 last_lr=5.27E-05 peak_cuda_mem=49.13GB bsz=120.0 n_tokens=10027814.4 
+2025-05-23 02:51:46 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 220 total update 03650: train_loss=3.7401 last_lr=5.23E-05 peak_cuda_mem=60.93GB bsz=120.0 n_tokens=10106572.8 
+2025-05-23 03:00:06 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 270 total update 03700: train_loss=3.7496 last_lr=5.20E-05 peak_cuda_mem=60.72GB bsz=120.0 n_tokens=10018252.8 
+2025-05-23 03:08:28 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 320 total update 03750: train_loss=3.7584 last_lr=5.16E-05 peak_cuda_mem=66.02GB bsz=120.0 n_tokens=10208857.6 
+2025-05-23 03:08:29 | INFO | seamlessm4t.trainer | Evaluation Step 15...
+2025-05-23 03:09:47 | INFO | seamlessm4t.trainer | Eval after 3750 updates: tot_loss=3.9954 best_loss=3.9858 patience_steps_left=6 
+2025-05-23 03:18:13 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 370 total update 03800: train_loss=3.7505 last_lr=5.13E-05 peak_cuda_mem=52.58GB bsz=120.0 n_tokens=10182041.6
+2025-05-23 03:26:37 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 420 total update 03850: train_loss=3.7501 last_lr=5.10E-05 peak_cuda_mem=60.52GB bsz=120.0 n_tokens=10163417.6 
+2025-05-23 03:35:02 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 470 total update 03900: train_loss=3.7548 last_lr=5.06E-05 peak_cuda_mem=50.89GB bsz=120.0 n_tokens=10154483.2 
+2025-05-23 03:43:22 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 520 total update 03950: train_loss=3.7538 last_lr=5.03E-05 peak_cuda_mem=59.36GB bsz=120.0 n_tokens=10050163.2 
+2025-05-23 03:51:48 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 570 total update 04000: train_loss=3.7550 last_lr=5.00E-05 peak_cuda_mem=56.55GB bsz=120.0 n_tokens=10061094.4 
+2025-05-23 03:51:48 | INFO | seamlessm4t.trainer | Evaluation Step 16...
+2025-05-23 03:53:05 | INFO | seamlessm4t.trainer | Eval after 4000 updates: tot_loss=3.9869 best_loss=3.9858 patience_steps_left=5 
+2025-05-23 04:01:30 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 620 total update 04050: train_loss=3.7600 last_lr=4.97E-05 peak_cuda_mem=61.82GB bsz=120.0 n_tokens=10152870.4
+2025-05-23 04:09:51 | INFO | seamlessm4t.trainer | Epoch 006 (686 steps) / update 670 total update 04100: train_loss=3.7547 last_lr=4.94E-05 peak_cuda_mem=64.12GB bsz=120.0 n_tokens=10173273.6 
+2025-05-23 04:18:06 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 34 total update 04150: train_loss=3.7089 last_lr=4.91E-05 peak_cuda_mem=70.80GB bsz=120.0 n_tokens=10240083.2 
+2025-05-23 04:26:08 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 84 total update 04200: train_loss=3.6945 last_lr=4.88E-05 peak_cuda_mem=63.71GB bsz=120.0 n_tokens=10010560.0 
+2025-05-23 04:34:16 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 134 total update 04250: train_loss=3.6907 last_lr=4.85E-05 peak_cuda_mem=60.88GB bsz=120.0 n_tokens=10251660.8 
+2025-05-23 04:34:16 | INFO | seamlessm4t.trainer | Evaluation Step 17...
+2025-05-23 04:35:35 | INFO | seamlessm4t.trainer | Eval after 4250 updates: tot_loss=4.0058 best_loss=3.9858 patience_steps_left=4 
+2025-05-23 04:43:57 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 184 total update 04300: train_loss=3.6843 last_lr=4.82E-05 peak_cuda_mem=61.96GB bsz=120.0 n_tokens=10146880.0
+2025-05-23 04:52:21 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 234 total update 04350: train_loss=3.6842 last_lr=4.79E-05 peak_cuda_mem=59.18GB bsz=120.0 n_tokens=10201420.8 
+2025-05-23 05:00:41 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 284 total update 04400: train_loss=3.6894 last_lr=4.77E-05 peak_cuda_mem=55.99GB bsz=120.0 n_tokens=10058713.6 
+2025-05-23 05:08:57 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 334 total update 04450: train_loss=3.6865 last_lr=4.74E-05 peak_cuda_mem=51.48GB bsz=120.0 n_tokens=10079616.0 
+2025-05-23 05:17:19 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 384 total update 04500: train_loss=3.6942 last_lr=4.71E-05 peak_cuda_mem=59.27GB bsz=120.0 n_tokens=10097011.2 
+2025-05-23 05:17:20 | INFO | seamlessm4t.trainer | Evaluation Step 18...
+2025-05-23 05:18:38 | INFO | seamlessm4t.trainer | Eval after 4500 updates: tot_loss=4.0055 best_loss=3.9858 patience_steps_left=3 
+2025-05-23 05:27:03 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 434 total update 04550: train_loss=3.7018 last_lr=4.69E-05 peak_cuda_mem=56.74GB bsz=120.0 n_tokens=10116262.4
+2025-05-23 05:35:29 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 484 total update 04600: train_loss=3.7005 last_lr=4.66E-05 peak_cuda_mem=66.04GB bsz=120.0 n_tokens=10160768.0 
+2025-05-23 05:43:54 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 534 total update 04650: train_loss=3.7006 last_lr=4.64E-05 peak_cuda_mem=51.75GB bsz=120.0 n_tokens=10172096.0 
+2025-05-23 05:52:20 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 584 total update 04700: train_loss=3.7036 last_lr=4.61E-05 peak_cuda_mem=52.15GB bsz=120.0 n_tokens=10150592.0 
+2025-05-23 06:00:38 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 634 total update 04750: train_loss=3.6867 last_lr=4.59E-05 peak_cuda_mem=60.15GB bsz=120.0 n_tokens=9979916.8 
+2025-05-23 06:00:38 | INFO | seamlessm4t.trainer | Evaluation Step 19...
+2025-05-23 06:02:00 | INFO | seamlessm4t.trainer | Eval after 4750 updates: tot_loss=3.9968 best_loss=3.9858 patience_steps_left=2 
+2025-05-23 06:10:26 | INFO | seamlessm4t.trainer | Epoch 007 (686 steps) / update 684 total update 04800: train_loss=3.7010 last_lr=4.56E-05 peak_cuda_mem=61.42GB bsz=120.0 n_tokens=10109747.2
+2025-05-23 06:18:46 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 48 total update 04850: train_loss=3.6324 last_lr=4.54E-05 peak_cuda_mem=60.71GB bsz=120.0 n_tokens=10042598.4 
+2025-05-23 06:27:10 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 98 total update 04900: train_loss=3.6353 last_lr=4.52E-05 peak_cuda_mem=57.90GB bsz=120.0 n_tokens=10143168.0 
+2025-05-23 06:35:37 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 148 total update 04950: train_loss=3.6327 last_lr=4.49E-05 peak_cuda_mem=67.08GB bsz=120.0 n_tokens=10220774.4 
+2025-05-23 06:44:01 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 198 total update 05000: train_loss=3.6481 last_lr=4.47E-05 peak_cuda_mem=56.25GB bsz=120.0 n_tokens=10107699.2 
+2025-05-23 06:44:01 | INFO | seamlessm4t.trainer | Evaluation Step 20...
+2025-05-23 06:45:20 | INFO | seamlessm4t.trainer | Eval after 5000 updates: tot_loss=4.0187 best_loss=3.9858 patience_steps_left=1 
+2025-05-23 06:53:48 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 248 total update 05050: train_loss=3.6365 last_lr=4.45E-05 peak_cuda_mem=69.49GB bsz=120.0 n_tokens=10163558.4
+2025-05-23 07:02:10 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 298 total update 05100: train_loss=3.6421 last_lr=4.43E-05 peak_cuda_mem=58.39GB bsz=120.0 n_tokens=10067520.0 
+2025-05-23 07:10:37 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 348 total update 05150: train_loss=3.6329 last_lr=4.41E-05 peak_cuda_mem=59.24GB bsz=120.0 n_tokens=10133132.8 
+2025-05-23 07:19:02 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 398 total update 05200: train_loss=3.6490 last_lr=4.39E-05 peak_cuda_mem=67.45GB bsz=120.0 n_tokens=10116006.4 
+2025-05-23 07:27:35 | INFO | seamlessm4t.trainer | Epoch 008 (686 steps) / update 448 total update 05250: train_loss=3.6450 last_lr=4.36E-05 peak_cuda_mem=57.98GB bsz=120.0 n_tokens=10183948.8 
+2025-05-23 07:27:35 | INFO | seamlessm4t.trainer | Evaluation Step 21...
+2025-05-23 07:28:55 | INFO | seamlessm4t.trainer | Eval after 5250 updates: tot_loss=4.0153 best_loss=3.9858 patience_steps_left=0 
+2025-05-23 07:28:55 | INFO | seamlessm4t.trainer | Early termination, as eval loss did not improve over last 2500 updates
+2025-05-23 07:28:55 | INFO | seamlessm4t.trainer | Evaluation Step 21...
+2025-05-23 07:30:13 | INFO | seamlessm4t.trainer | Eval after 5250 updates: tot_loss=4.0212 best_loss=3.9858 patience_steps_left=-1 
